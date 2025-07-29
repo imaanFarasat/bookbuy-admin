@@ -58,9 +58,9 @@ async function handler(request: NextRequest, validatedData: any): Promise<NextRe
       })
     }
 
-    // Check if OpenAI API key is valid (not empty string)
-    if (process.env.OPENAI_API_KEY && !process.env.OPENAI_API_KEY.trim()) {
-      console.log('OpenAI API key is empty, generating simple content')
+    // Check if OpenAI API key is missing or empty
+    if (!process.env.OPENAI_API_KEY || !process.env.OPENAI_API_KEY.trim()) {
+      console.log('OpenAI API key is missing or empty, generating simple content')
       return NextResponse.json({ 
         content: `<div class="row mb-4">
           <div class="col-lg-4 mb-4">
@@ -72,42 +72,29 @@ async function handler(request: NextRequest, validatedData: any): Promise<NextRe
           </div>
       </div>`,
         success: true,
-        message: 'Generated simple content (OpenAI API key is empty)'
+        message: 'Generated simple content (OpenAI API key is missing or empty)'
       })
     }
 
     // Try to use OpenAI API
     // ⚠️ CRITICAL: Only provide structure to AI - let AI decide content
     try {
-      // Build prompt with individual custom prompts for each keyword
-      let promptContent = `${keywords.filter((k: any) => k.customPrompt).map((keyword: any, index: number) => 
-  `🚨 SPECIFIC INSTRUCTION FOR "${keyword.keyword}" (${index + 1}st H2): ${keyword.customPrompt}`
-).join('\n\n')}
+      // Build clean natural language prompt
+      const specificInstructions = keywords.filter((k: any) => k.customPrompt).map((keyword: any, index: number) => 
+  `(${index + 1}) Keyword: "${keyword.keyword}"\nInstruction: ${keyword.customPrompt}`
+).join('\n\n')
 
-Create content for these H2 keywords: ${allKeywords.join(', ')}. 
+      let promptContent = `You are a content writer for an SEO-focused website.
 
-Use this structure:
+Here are H2 keywords and their specific writing instructions:
 
-${keywords.map((keyword: any) => {
-  const capitalizedKeyword = keyword.keyword.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')
-  return `<div class="row mb-4">
-  <div class="col-lg-4 mb-4">
-      <!-- Image will be added by user later -->
-  </div>
-  <div class="col-lg-8 mb-4">
-      <h2 class="h2-body-content">${capitalizedKeyword}</h2>
-      <p class="p-body-content">[REPLACE THIS WITH ACTUAL CONTENT about ${keyword.keyword}]</p>
-  </div>
-</div>`
-}).join('\n\n')}`
+${specificInstructions}
 
-      // Add clear instruction to follow individual prompts
-      const hasIndividualPrompts = keywords.some((k: any) => k.customPrompt)
-      if (hasIndividualPrompts) {
-        promptContent += `
+Write a 2-4 sentence paragraph for each keyword in the same order. Do not skip any. Avoid generic content. Focus on being helpful and specific.
 
-Follow the specific instructions exactly.`
-      }
+Respond with only the paragraphs, one per line, in the same order as the keywords.`
+
+
 
       // Log individual prompts
       keywords.forEach((keyword: any, index: number) => {
@@ -144,8 +131,28 @@ Follow the specific instructions exactly.`
       
       if (aiContent) {
         console.log('Generated content with OpenAI:', aiContent.substring(0, 200) + '...')
+        
+        // Parse the response into paragraphs
+        const paragraphs = aiContent.trim().split('\n').filter(p => p.trim())
+        
+        // Build HTML with the generated content
+        const htmlContent = keywords.map((keyword: any, index: number) => {
+          const capitalizedKeyword = keyword.keyword.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')
+          const paragraph = paragraphs[index] || `Content about ${keyword.keyword}`
+          
+          return `<div class="row mb-4">
+  <div class="col-lg-4 mb-4">
+      <!-- Image will be added by user later -->
+  </div>
+  <div class="col-lg-8 mb-4">
+      <h2 class="h2-body-content">${capitalizedKeyword}</h2>
+      <p class="p-body-content">${paragraph}</p>
+  </div>
+</div>`
+        }).join('\n\n')
+        
         return NextResponse.json({ 
-          content: aiContent.trim(),
+          content: htmlContent,
           success: true 
         })
       } else {
