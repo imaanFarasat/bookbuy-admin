@@ -3063,6 +3063,8 @@ knife maintenance tips - 1800"
                             <li>"Use lists in the 1st and 4th H2s"</li>
                             <li>"Focus on local businesses and services"</li>
                             <li>"Include practical tips and advice"</li>
+                            <li>"For 2nd H2, list 10 specific businesses with names and descriptions"</li>
+                            <li>"In 3rd H2, mention real locations and addresses"</li>
                           </ul>
                         </div>
                       </div>

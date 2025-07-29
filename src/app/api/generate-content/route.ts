@@ -76,7 +76,26 @@ H2 positions: ${keywords.map((keyword: any, index: number) => `${index + 1}st: $
 
       // Add custom prompt if provided
       if (customPrompt && customPrompt.trim()) {
-        promptContent += `\n\nAlso follow these instructions: ${customPrompt}`
+        promptContent = `Write content for these H2 keywords: ${allKeywords.join(', ')}. 
+
+IMPORTANT: You MUST follow these specific instructions: ${customPrompt}
+
+Each H2 should have unique content. Use this structure:
+
+${keywords.map((keyword: any) => {
+  const capitalizedKeyword = keyword.keyword.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')
+  return `<div class="row mb-4">
+  <div class="col-lg-4 mb-4">
+      <!-- Image will be added by user later -->
+  </div>
+  <div class="col-lg-8 mb-4">
+      <h2 class="h2-body-content">${capitalizedKeyword}</h2>
+      <p class="p-body-content">[Write content about ${keyword.keyword}]</p>
+  </div>
+</div>`
+}).join('\n\n')}
+
+H2 positions: ${keywords.map((keyword: any, index: number) => `${index + 1}st: ${keyword.keyword}`).join(', ')}`
         console.log('🔍 DEBUG: Custom prompt added:', customPrompt)
       }
 
@@ -93,7 +112,7 @@ H2 positions: ${keywords.map((keyword: any, index: number) => `${index + 1}st: $
           }
         ],
         max_tokens: 3000,
-        temperature: 0.9
+        temperature: 0.7
       })
 
       const aiContent = completion.choices[0]?.message?.content || ''
