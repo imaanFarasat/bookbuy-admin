@@ -2155,7 +2155,7 @@ export default function Dashboard() {
         // Replace each content section with our AI-generated content
         for (let i = 0; i < mainContentWithAI.length; i++) {
           const contentSection = mainContentWithAI[i]
-          const heading = `<h2 class="h2-body-content">${contentSection.keyword}</h2>`
+          const heading = `<h2 class="h4 mb-3 text-primary">${contentSection.keyword}</h2>`
           const content = contentSection.content
               
               if (content) {
@@ -2167,23 +2167,23 @@ export default function Dashboard() {
                 if (isEven) {
                   // Image on left, content on right
               finalContent += `<div class="row mb-4">
-                    <div class="col-lg-4 mb-4">
-                    ${bodyImage ? `<img src="${bodyImage.url}" alt="${bodyImage.alt}" class="w-full h-48 md:h-56 lg:h-64 object-cover rounded-lg shadow-md" loading="lazy" decoding="async" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='block'; console.log('Content image failed to load: ' + this.src);" onload="console.log('Content image loaded successfully: ' + this.src)">` : '<!-- Image will be added by user later -->'}
-                    </div>
                     <div class="col-lg-8 mb-4">
                         ${heading}
-                        <p class="p-body-content">${content}</p>
+                        <p class="mb-3">${content}</p>
+                    </div>
+                    <div class="col-lg-4 mb-4">
+                        ${bodyImage ? `<img src="${bodyImage.url}" alt="${bodyImage.alt}" class="img-fluid rounded shadow" loading="lazy" decoding="async" onerror="this.style.display='none'; console.log('Content image failed to load: ' + this.src);" onload="console.log('Content image loaded successfully: ' + this.src)">` : '<!-- Image will be added by user later -->'}
                     </div>
                 </div>\n\n`
                 } else {
                   // Content on left, image on right
               finalContent += `<div class="row mb-4">
+                    <div class="col-lg-4 mb-4">
+                        ${bodyImage ? `<img src="${bodyImage.url}" alt="${bodyImage.alt}" class="img-fluid rounded shadow" loading="lazy" decoding="async" onerror="this.style.display='none'; console.log('Content image failed to load: ' + this.src);" onload="console.log('Content image loaded successfully: ' + this.src)">` : '<!-- Image will be added by user later -->'}
+                    </div>
                     <div class="col-lg-8 mb-4">
                         ${heading}
-                        <p class="p-body-content">${content}</p>
-                    </div>
-                    <div class="col-lg-4 mb-4">
-                    ${bodyImage ? `<img src="${bodyImage.url}" alt="${bodyImage.alt}" class="w-full h-48 md:h-56 lg:h-64 object-cover rounded-lg shadow-md" loading="lazy" decoding="async" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='block'; console.log('Content image failed to load: ' + this.src);" onload="console.log('Content image loaded successfully: ' + this.src)">` : '<!-- Image will be added by user later -->'}
+                        <p class="mb-3">${content}</p>
                     </div>
                 </div>\n\n`
                 }

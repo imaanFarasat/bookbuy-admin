@@ -86,7 +86,7 @@ export default async function DynamicPage({ params }: PageProps) {
                                                     <a href="${(page as any).heroSection.buttonUrl}" class="book-button">
                                                         ${(page as any).heroSection.buttonText}
                                                     </a>
-                                                    ` : ''}
+                                                    ` : '<!-- No button data: buttonUrl=' + ((page as any).heroSection?.buttonUrl || 'null') + ', buttonText=' + ((page as any).heroSection?.buttonText || 'null') + ' -->'}
                                                 </div>
                                             </div>
                                             
@@ -145,14 +145,7 @@ export default async function DynamicPage({ params }: PageProps) {
                                     ${page.content || ''}
                                 </div>
                                 
-                                <!-- FAQ Section (only if not already in content) -->
-                                ${page.faqContent && !page.content?.includes('Frequently Asked Questions') ? `
-                                <div class="faq-section">
-                                    <h2 class="h2-faq-title">Frequently Asked Questions</h2>
-                                    <hr class="mb-5">
-                                    ${page.faqContent}
-                                </div>
-                                ` : ''}
+                                <!-- FAQ content is already embedded in the main content -->
                                 
                                 <!-- Related Images -->
                                 ${page.images && page.images.length > 2 ? `
