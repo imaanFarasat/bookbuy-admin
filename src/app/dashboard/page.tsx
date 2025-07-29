@@ -3050,17 +3050,19 @@ knife maintenance tips - 1800"
                         <textarea
                           value={customContentPrompt}
                           onChange={(e) => setCustomContentPrompt(e.target.value)}
-                          placeholder="Enter custom prompt for content generation (e.g., 'write about these keywords and all the p must be about toronto city')"
+                          placeholder="Enter custom instructions (e.g., 'Add bullet points to the 2nd H2' or 'All content must be about Toronto city')"
                           className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors resize-none"
                           rows={3}
                         />
                         <div className="text-sm text-gray-600">
                           <p>💡 <strong>Examples:</strong></p>
                           <ul className="list-disc list-inside mt-1 space-y-1">
-                            <li>"write about these keywords and all the p must be about toronto city"</li>
-                            <li>"focus on local businesses and services in the area"</li>
-                            <li>"emphasize quality and customer satisfaction"</li>
-                            <li>"include practical tips and advice for beginners"</li>
+                            <li>"Add bullet points to the 2nd H2"</li>
+                            <li>"Make the 3rd H2 a comparison table"</li>
+                            <li>"All content must be about Toronto city"</li>
+                            <li>"Use lists in the 1st and 4th H2s"</li>
+                            <li>"Focus on local businesses and services"</li>
+                            <li>"Include practical tips and advice"</li>
                           </ul>
                         </div>
                       </div>
