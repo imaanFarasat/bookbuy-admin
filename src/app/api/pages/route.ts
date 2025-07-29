@@ -141,15 +141,38 @@ export async function POST(request: NextRequest) {
           }))
         },
         images: {
-          create: validatedData.images?.map((img, index) => ({
-            originalName: `${img.type}-${index + 1}`,
-            fileName: `${img.type}-${index + 1}.jpg`,
-            filePath: img.url, // Store Base64 or file path
-            altText: img.alt,
-            fileSize: img.url.length, // Approximate size
-            mimeType: 'image/jpeg',
-            sortOrder: index
-          })) || []
+          create: validatedData.images?.map((img, index) => {
+            // Check if the image URL is Base64 data
+            const isBase64 = img.url.startsWith('data:image/')
+            
+            // For Base64 images, we need to handle them differently
+            let filePath = img.url
+            let fileSize = img.url.length
+            
+            // If Base64 data is too large, truncate or skip
+            if (isBase64 && fileSize > 1000000) { // 1MB limit for Base64
+              console.warn(`Image ${index + 1} is too large (${fileSize} bytes), skipping...`)
+              return {
+                originalName: `${img.type}-${index + 1}`,
+                fileName: `${img.type}-${index + 1}.jpg`,
+                filePath: '', // Empty path for skipped images
+                altText: img.alt,
+                fileSize: 0,
+                mimeType: 'image/jpeg',
+                sortOrder: index
+              }
+            }
+            
+            return {
+              originalName: `${img.type}-${index + 1}`,
+              fileName: `${img.type}-${index + 1}.jpg`,
+              filePath: filePath, // Store Base64 or file path
+              altText: img.alt,
+              fileSize: fileSize,
+              mimeType: 'image/jpeg',
+              sortOrder: index
+            }
+          }) || []
         }
       },
       include: {

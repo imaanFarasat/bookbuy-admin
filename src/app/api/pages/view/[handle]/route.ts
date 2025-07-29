@@ -39,7 +39,17 @@ export async function GET(
     console.log('🔍 Hero Section:', (page as any).heroSection)
     console.log('🔍 Banner Ads:', (page as any).bannerAds)
     console.log('🔍 Images Count:', page.images?.length || 0)
-    console.log('🔍 Images:', page.images?.map(img => ({ filePath: img.filePath, altText: img.altText })))
+    console.log('🔍 Images:', page.images?.map(img => ({ 
+      filePath: img.filePath ? img.filePath.substring(0, 100) + '...' : 'empty',
+      filePathLength: img.filePath?.length || 0,
+      altText: img.altText,
+      fileSize: img.fileSize
+    })))
+    
+    // Check for Base64 images
+    const base64Images = page.images?.filter(img => img.filePath?.startsWith('data:image/')) || []
+    console.log('🔍 Base64 Images Count:', base64Images.length)
+    console.log('🔍 Base64 Image Sizes:', base64Images.map(img => img.fileSize))
     
     // Debug hero section data
     console.log('🔍 Hero section data:', {
@@ -182,13 +192,28 @@ export async function GET(
                                             
                                             for (let i = 0; i < h2Sections.length && i < contentImages.length; i++) {
                                                 const image = contentImages[i]
-                                                const imageHtml = `<img src="${image.filePath}" alt="${image.altText}" class="img-fluid rounded shadow" loading="lazy" decoding="async" onerror="this.style.display='none'; console.log('Content image failed to load: ' + this.src);" onload="console.log('Content image loaded successfully: ' + this.src)">`
                                                 
-                                                // Replace the placeholder for this section
-                                                contentWithImages = contentWithImages.replace(
-                                                    /<!-- Image will be added by user later -->/,
-                                                    imageHtml
-                                                )
+                                                // Only display image if filePath is not empty and valid
+                                                if (image.filePath && image.filePath.trim() !== '') {
+                                                    // Check if it's a valid Base64 image or external URL
+                                                    const isValidImage = image.filePath.startsWith('data:image/') || 
+                                                                       image.filePath.startsWith('http') ||
+                                                                       image.filePath.startsWith('/')
+                                                    
+                                                    if (isValidImage) {
+                                                        const imageHtml = `<img src="${image.filePath}" alt="${image.altText}" class="img-fluid rounded shadow" loading="lazy" decoding="async" onerror="this.style.display='none'; console.log('Content image failed to load: ' + this.src);" onload="console.log('Content image loaded successfully: ' + this.src)">`
+                                                        
+                                                        // Replace the placeholder for this section
+                                                        contentWithImages = contentWithImages.replace(
+                                                            /<!-- Image will be added by user later -->/,
+                                                            imageHtml
+                                                        )
+                                                    } else {
+                                                        console.log(`Skipping invalid image path: ${image.filePath.substring(0, 50)}...`)
+                                                    }
+                                                } else {
+                                                    console.log(`Skipping empty image path for image ${i + 1}`)
+                                                }
                                             }
                                         }
                                         

@@ -1437,15 +1437,55 @@ export default function Dashboard() {
     
     setSelectedImages(prev => [...prev, ...validFiles])
     
-    // Create preview URLs and generate alt text
+    // Create preview URLs and generate alt text with compression
     validFiles.forEach((file, index) => {
       const reader = new FileReader()
       reader.onload = (e) => {
-        setImageUrls(prev => [...prev, e.target?.result as string])
+        const base64Data = e.target?.result as string
         
-        // Use main keyword directly as alt text for all images
-        const mainKeyword = getMainKeyword()
-        setImageAltTexts(prev => [...prev, mainKeyword])
+        // Compress image if it's too large (over 500KB)
+        if (base64Data.length > 500000) {
+          const img = new Image()
+          img.onload = () => {
+            const canvas = document.createElement('canvas')
+            const ctx = canvas.getContext('2d')
+            
+            // Calculate new dimensions (max 800px width/height)
+            const maxSize = 800
+            let { width, height } = img
+            if (width > height) {
+              if (width > maxSize) {
+                height = (height * maxSize) / width
+                width = maxSize
+              }
+            } else {
+              if (height > maxSize) {
+                width = (width * maxSize) / height
+                height = maxSize
+              }
+            }
+            
+            canvas.width = width
+            canvas.height = height
+            
+            ctx?.drawImage(img, 0, 0, width, height)
+            
+            // Convert to compressed JPEG
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7)
+            setImageUrls(prev => [...prev, compressedDataUrl])
+            
+            // Use main keyword directly as alt text for all images
+            const mainKeyword = getMainKeyword()
+            setImageAltTexts(prev => [...prev, mainKeyword])
+          }
+          img.src = base64Data
+        } else {
+          setImageUrls(prev => [...prev, base64Data])
+          
+          // Use main keyword directly as alt text for all images
+          const mainKeyword = getMainKeyword()
+          setImageAltTexts(prev => [...prev, mainKeyword])
+        }
       }
       reader.readAsDataURL(file)
     })
@@ -1589,6 +1629,12 @@ export default function Dashboard() {
     const mockFile = new File([], `pexels-${pexelsImage.id}.jpg`, { type: 'image/jpeg' })
     
     const imageUrl = pexelsImage.url || pexelsImage.largeUrl || pexelsImage.originalUrl || pexelsImage.thumbnailUrl
+    
+    // Validate image URL
+    if (!imageUrl || imageUrl.trim() === '') {
+      setMessage('❌ Invalid image URL')
+      return
+    }
     
     setSelectedImages(prev => [...prev, mockFile])
     setImageUrls(prev => [...prev, imageUrl])
@@ -2404,25 +2450,25 @@ export default function Dashboard() {
             headingType: k.headingType
           })),
           images: [
-            ...(bodyContentImages || []).map((img: any) => ({
+            ...(bodyContentImages || []).filter((img: any) => img.url && img.url.trim() !== '').map((img: any) => ({
               url: img.url,
               alt: img.alt,
               source: img.source,
               type: 'content'
             })),
-            ...(bannerAds.length > 0 && bannerAds[0].image ? [{
-              url: bannerAds[0].image.url || '',
+            ...(bannerAds.length > 0 && bannerAds[0].image && bannerAds[0].image.url ? [{
+              url: bannerAds[0].image.url,
               alt: bannerAds[0].image.alt || '',
               source: bannerAds[0].image.source || 'file',
               type: 'banner'
             }] : []),
-            ...(heroImage1 ? [{
+            ...(heroImage1 && heroImage1.trim() !== '' ? [{
               url: heroImage1,
               alt: heroAlt1,
               source: 'file',
               type: 'hero'
             }] : []),
-            ...(heroImage2 ? [{
+            ...(heroImage2 && heroImage2.trim() !== '' ? [{
               url: heroImage2,
               alt: heroAlt2,
               source: 'file',
