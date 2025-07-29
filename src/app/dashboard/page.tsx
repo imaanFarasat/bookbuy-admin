@@ -2393,7 +2393,7 @@ export default function Dashboard() {
           parentPageId: watch('parentPageId'),
           metaTitle: dashboardData.metaTitle,
           metaDescription: dashboardData.metaDescription,
-          content: editableContent || '', // Save only the content, not the full HTML template
+          content: editableContent || '', // Save the content, images will be embedded by API route
           faqContent: dashboardData.faq,
           faqSchema: dashboardData.schema,
           keywords: keywords.filter(k => k.selected).map(k => ({

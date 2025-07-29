@@ -171,7 +171,29 @@ export async function GET(
                                         Hero Section: ${(page as any).heroSection ? 'Present' : 'Missing'}<br>
                                         Banner Ads: ${(page as any).bannerAds?.length || 0}
                                     </div>
-                                    ${page.content || ''}
+                                    ${(() => {
+                                        // Embed images into content
+                                        let contentWithImages = page.content || ''
+                                        const contentImages = page.images || []
+                                        
+                                        if (contentImages.length > 0) {
+                                            // Replace image placeholders with actual images
+                                            const h2Sections = contentWithImages.match(/<h2[^>]*>.*?<\/h2>/g) || []
+                                            
+                                            for (let i = 0; i < h2Sections.length && i < contentImages.length; i++) {
+                                                const image = contentImages[i]
+                                                const imageHtml = `<img src="${image.filePath}" alt="${image.altText}" class="img-fluid rounded shadow" loading="lazy" decoding="async" onerror="this.style.display='none'; console.log('Content image failed to load: ' + this.src);" onload="console.log('Content image loaded successfully: ' + this.src)">`
+                                                
+                                                // Replace the placeholder for this section
+                                                contentWithImages = contentWithImages.replace(
+                                                    /<!-- Image will be added by user later -->/,
+                                                    imageHtml
+                                                )
+                                            }
+                                        }
+                                        
+                                        return contentWithImages
+                                    })()}
                                 </div>
                                 
                                 <!-- FAQ content is already embedded in the main content -->
