@@ -78,6 +78,24 @@ export default async function DynamicPage({ params }: PageProps) {
             padding: 60px 0;
             text-align: center;
             margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 1;
+        }
+        
+        .hero-section .container {
+            position: relative;
+            z-index: 2;
         }
         
         .hero-section h1 {
@@ -106,6 +124,21 @@ export default async function DynamicPage({ params }: PageProps) {
             transform: translateY(-2px);
         }
         
+        .hero-images {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .hero-image {
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
         .content-section {
             padding: 40px 0;
         }
@@ -126,6 +159,52 @@ export default async function DynamicPage({ params }: PageProps) {
             margin-bottom: 20px;
             font-size: 1.1rem;
             line-height: 1.8;
+        }
+        
+        .banner-section {
+            background: #f8f9fa;
+            padding: 40px 0;
+            margin: 40px 0;
+        }
+        
+        .banner-ad {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .banner-ad img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .banner-ad h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .banner-ad p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .banner-ad .btn {
+            background: #007bff;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .banner-ad .btn:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
         }
         
         .image-section {
@@ -209,6 +288,16 @@ export default async function DynamicPage({ params }: PageProps) {
             .container {
                 padding: 10px;
             }
+            
+            .hero-images {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .hero-image {
+                width: 100%;
+                max-width: 300px;
+            }
         }
     </style>
 </head>
@@ -224,6 +313,13 @@ export default async function DynamicPage({ params }: PageProps) {
             <h1>${page.mainKeyword}</h1>
             ${(page as any).heroSection?.slogan ? `<p>${(page as any).heroSection.slogan}</p>` : ''}
             ${(page as any).heroSection?.buttonUrl ? `<a href="${(page as any).heroSection.buttonUrl}" class="btn btn-light">Learn More</a>` : ''}
+            
+            ${(page as any).heroSection?.image1 || (page as any).heroSection?.image2 ? `
+            <div class="hero-images">
+                ${(page as any).heroSection?.image1 ? `<img src="${(page as any).heroSection.image1}" alt="${(page as any).heroSection?.alt1 || page.mainKeyword}" class="hero-image">` : ''}
+                ${(page as any).heroSection?.image2 ? `<img src="${(page as any).heroSection.image2}" alt="${(page as any).heroSection?.alt2 || page.mainKeyword}" class="hero-image">` : ''}
+            </div>
+            ` : ''}
         </div>
     </div>
     
@@ -232,6 +328,21 @@ export default async function DynamicPage({ params }: PageProps) {
             ${(page as any).content || ''}
         </div>
     </div>
+    
+    ${(page as any).bannerAds && (page as any).bannerAds.length > 0 ? `
+    <div class="banner-section">
+        <div class="container">
+            ${(page as any).bannerAds.map((banner: any) => `
+                <div class="banner-ad">
+                    ${banner.image ? `<img src="${banner.image}" alt="Banner Ad">` : ''}
+                    <h3>${banner.title || 'Special Offer'}</h3>
+                    <p>${banner.description || 'Discover amazing deals and offers.'}</p>
+                    ${banner.cta ? `<a href="#" class="btn">${banner.cta}</a>` : ''}
+                </div>
+            `).join('')}
+        </div>
+    </div>
+    ` : ''}
     
     ${(page as any).faqContent ? `
     <div class="faq-section">
