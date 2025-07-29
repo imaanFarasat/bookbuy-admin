@@ -106,9 +106,9 @@ export async function GET(
                                                         <span class="title-extraordinary">${(page as any).heroSection?.slogan || ''}</span>
                                                     </h1>
                                                     <p class="hero-description">${(page as any).heroSection?.span || ''}</p>
-                                                    ${(page as any).heroSection?.buttonUrl && (page as any).heroSection?.buttonText ? `
+                                                    ${(page as any).heroSection?.buttonUrl ? `
                                                     <a href="${(page as any).heroSection.buttonUrl}" class="book-button">
-                                                        ${(page as any).heroSection.buttonText}
+                                                        ${(page as any).heroSection?.buttonText || 'Learn More'}
                                                     </a>
                                                     ` : `<div style="background: red; color: white; padding: 10px; margin: 10px 0; border-radius: 5px;">
                                                         DEBUG: No button data<br>

@@ -2486,6 +2486,7 @@ export default function Dashboard() {
             slogan: heroSlogan,
             span: heroSpan,
             buttonUrl: heroButtonUrl,
+            buttonText: heroButtonText,
             image1: heroImage1,
             image2: heroImage2,
             alt1: heroAlt1,
