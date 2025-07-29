@@ -302,8 +302,8 @@ export default function Dashboard() {
   const [showEditOptions, setShowEditOptions] = useState(false)
   
   // Custom prompt for content generation
-  const [customContentPrompt, setCustomContentPrompt] = useState('')
-  const [showCustomPrompt, setShowCustomPrompt] = useState(false)
+
+
   const [finalPageData, setFinalPageData] = useState<{
     content: string;
     faq: string;
@@ -856,8 +856,7 @@ export default function Dashboard() {
             keyword: k.keyword,
             headingType: k.headingType,
             customPrompt: k.customPrompt || '' // Include individual custom prompts
-          })),
-          customPrompt: customContentPrompt // Keep global prompt for backward compatibility
+          }))
         }
         
         console.log('Sending request to API for all keywords:', JSON.stringify(requestBody, null, 2))

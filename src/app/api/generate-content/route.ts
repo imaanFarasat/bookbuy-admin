@@ -10,6 +10,12 @@ import { contentGenerationSchema } from '@/lib/validation-schemas'
 async function handler(request: NextRequest, validatedData: any): Promise<NextResponse> {
   try {
     console.log('Received validated data:', validatedData)
+    console.log('🔍 DEBUG: === INCOMING REQUEST DATA ===')
+    console.log('Keywords:', JSON.stringify(validatedData.keywords, null, 2))
+    console.log('Main Keyword:', validatedData.mainKeyword)
+    console.log('Custom Prompt:', validatedData.customPrompt)
+    console.log('🔍 DEBUG: === END OF REQUEST DATA ===')
+    
     const { keywords, mainKeyword, customPrompt } = validatedData // Use validated and sanitized data
     
     console.log('🔍 DEBUG: mainKeyword =', mainKeyword)
@@ -82,6 +88,8 @@ ${keywords.filter((k: any) => k.customPrompt).map((keyword: any, index: number) 
   `🚨 SPECIFIC INSTRUCTION FOR "${keyword.keyword}" (${index + 1}st H2): ${keyword.customPrompt}`
 ).join('\n\n')}
 
+IMPORTANT: You MUST follow the specific instructions above for each H2. Do NOT generate generic content.
+
 Write comprehensive, detailed content for each H2. Use this structure but replace the placeholder with actual content:
 
 ${keywords.map((keyword: any) => {
@@ -97,22 +105,12 @@ ${keywords.map((keyword: any) => {
 </div>`
 }).join('\n\n')}`
 
-      // Add global custom prompt if provided
-      if (customPrompt && customPrompt.trim()) {
-        promptContent = `🚨 GLOBAL INSTRUCTION: ${customPrompt}
+      // Add clear instruction to follow individual prompts
+      const hasIndividualPrompts = keywords.some((k: any) => k.customPrompt)
+      if (hasIndividualPrompts) {
+        promptContent += `
 
-${promptContent}
-
-IMPORTANT: Follow the global instruction above AND any specific instructions for individual H2s.`
-        console.log('🔍 DEBUG: Global custom prompt added:', customPrompt)
-      } else {
-        // Add clear instruction to follow individual prompts
-        const hasIndividualPrompts = keywords.some((k: any) => k.customPrompt)
-        if (hasIndividualPrompts) {
-          promptContent += `
-
-🚨 CRITICAL: You MUST follow the specific instructions above for each H2. Do NOT generate generic content - follow the exact instructions provided for each keyword.`
-        }
+🚨 CRITICAL: You MUST follow the specific instructions for each H2. Do NOT generate generic content - follow the exact instructions provided for each keyword.`
       }
 
       // Log individual prompts
@@ -127,6 +125,9 @@ IMPORTANT: Follow the global instruction above AND any specific instructions for
       console.log('🔍 DEBUG: Custom prompt provided:', customPrompt)
       console.log('🔍 DEBUG: Individual prompts found:', keywords.filter((k: any) => k.customPrompt).map((k: any) => `${k.keyword}: ${k.customPrompt}`))
       console.log('🔍 DEBUG: Full OpenAI prompt =', promptContent)
+      console.log('🔍 DEBUG: === FULL PROMPT BEING SENT TO OPENAI ===')
+      console.log(promptContent)
+      console.log('🔍 DEBUG: === END OF PROMPT ===')
       console.log('🔍 DEBUG: OpenAI API key configured:', !!process.env.OPENAI_API_KEY)
       console.log('🔍 DEBUG: OpenAI API key length:', process.env.OPENAI_API_KEY?.length || 0)
       console.log('🔍 DEBUG: OpenAI API key starts with sk-:', process.env.OPENAI_API_KEY?.startsWith('sk-') || false)
@@ -140,7 +141,7 @@ IMPORTANT: Follow the global instruction above AND any specific instructions for
           }
         ],
         max_tokens: 4000,
-        temperature: 0.8
+        temperature: 0.9
       })
 
       const aiContent = completion.choices[0]?.message?.content || ''
