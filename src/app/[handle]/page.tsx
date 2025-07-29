@@ -172,7 +172,7 @@ export default async function DynamicPage({ params }: PageProps) {
     <!-- Footer -->
     <footer class="tm-copyright">
         <div class="container">
-            <p>&copy; 2024 ${page.mainKeyword}. All rights reserved.</p>
+            <p>&copy; 2025 BookBuy. All rights reserved.</p>
         </div>
     </footer>
     

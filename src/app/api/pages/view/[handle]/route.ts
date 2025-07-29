@@ -459,7 +459,7 @@ export async function GET(
     <!-- Footer -->
     <footer class="tm-copyright">
         <div class="container">
-            <p>&copy; 2024 ${page.mainKeyword}. All rights reserved.</p>
+            <p>&copy; 2025 BookBuy. All rights reserved.</p>
         </div>
     </footer>
     
