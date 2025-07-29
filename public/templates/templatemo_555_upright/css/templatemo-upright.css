@@ -290,8 +290,8 @@ img {
 .hero-container {
     min-height: 70vh;
     background: linear-gradient(to bottom right, rgb(250, 250, 250), rgb(245, 245, 245));
-    width: calc(100vw - 280px);
-    margin-left: 280px;
+    width: 100%;
+    margin-left: 0;
     position: relative;
 }
 
