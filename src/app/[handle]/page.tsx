@@ -145,8 +145,8 @@ export default async function DynamicPage({ params }: PageProps) {
                                     ${page.content || ''}
                                 </div>
                                 
-                                <!-- FAQ Section -->
-                                ${page.faqContent ? `
+                                <!-- FAQ Section (only if not already in content) -->
+                                ${page.faqContent && !page.content?.includes('Frequently Asked Questions') ? `
                                 <div class="faq-section">
                                     <h2 class="h2-faq-title">Frequently Asked Questions</h2>
                                     <hr class="mb-5">
