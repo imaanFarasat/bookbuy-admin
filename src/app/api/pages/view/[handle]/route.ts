@@ -51,6 +51,16 @@ export async function GET(
     console.log('🔍 Base64 Images Count:', base64Images.length)
     console.log('🔍 Base64 Image Sizes:', base64Images.map(img => img.fileSize))
     
+    // Debug banner ads structure
+    console.log('🔍 Banner Ads Structure:', (page as any).bannerAds?.map((banner: any) => ({
+        title: banner.title,
+        description: banner.description,
+        cta: banner.cta,
+        image: banner.image,
+        imageUrl: banner.image?.url,
+        imageAlt: banner.image?.alt
+    })))
+    
     // Debug hero section data
     console.log('🔍 Hero section data:', {
       heroSection: (page as any).heroSection,
@@ -281,7 +291,7 @@ export async function GET(
                                                         <div class="banner-ad-container">
                                                             <div class="banner-ad-content">
                                                                 <div class="banner-ad-image">
-                                                                    ${banner.image?.url ? `<img src="${banner.image.url}" alt="${banner.image.alt || 'Banner Ad'}" class="img-fluid">` : ''}
+                                                                    ${banner.image?.url || banner.image ? `<img src="${banner.image.url || banner.image}" alt="${banner.image?.alt || 'Banner Ad'}" class="img-fluid">` : ''}
                                                                 </div>
                                                                 <div class="banner-ad-text">
                                                                     <h3 class="banner-ad-title">${banner.title || 'Banner Ad'}</h3>
@@ -304,7 +314,7 @@ export async function GET(
                                                 <div class="banner-ad-container">
                                                     <div class="banner-ad-content">
                                                         <div class="banner-ad-image">
-                                                            ${banner.image?.url ? `<img src="${banner.image.url}" alt="${banner.image.alt || 'Banner Ad'}" class="img-fluid">` : ''}
+                                                            ${banner.image?.url || banner.image ? `<img src="${banner.image.url || banner.image}" alt="${banner.image?.alt || 'Banner Ad'}" class="img-fluid">` : ''}
                                                         </div>
                                                         <div class="banner-ad-text">
                                                             <h3 class="banner-ad-title">${banner.title || 'Banner Ad'}</h3>
