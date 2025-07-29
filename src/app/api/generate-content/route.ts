@@ -52,6 +52,24 @@ async function handler(request: NextRequest, validatedData: any): Promise<NextRe
       })
     }
 
+    // Check if OpenAI API key is valid (not empty string)
+    if (!process.env.OPENAI_API_KEY.trim()) {
+      console.log('OpenAI API key is empty, generating simple content')
+      return NextResponse.json({ 
+        content: `<div class="row mb-4">
+          <div class="col-lg-4 mb-4">
+              <!-- Image will be added by user later -->
+          </div>
+          <div class="col-lg-8 mb-4">
+              <h2 class="h2-body-content">${keywords[0]?.keyword.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}</h2>
+              <p class="p-body-content">[AI will generate content about ${keywords[0]?.keyword}]</p>
+          </div>
+      </div>`,
+        success: true,
+        message: 'Generated simple content (OpenAI API key is empty)'
+      })
+    }
+
     // Try to use OpenAI API
     // ⚠️ CRITICAL: Only provide structure to AI - let AI decide content
     try {
@@ -107,6 +125,8 @@ ${keywords.map((keyword: any) => {
       console.log('🔍 DEBUG: Custom prompt provided:', customPrompt)
       console.log('🔍 DEBUG: OpenAI prompt =', promptContent)
       console.log('🔍 DEBUG: OpenAI API key configured:', !!process.env.OPENAI_API_KEY)
+      console.log('🔍 DEBUG: OpenAI API key length:', process.env.OPENAI_API_KEY?.length || 0)
+      console.log('🔍 DEBUG: OpenAI API key starts with sk-:', process.env.OPENAI_API_KEY?.startsWith('sk-') || false)
       
       const completion = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
