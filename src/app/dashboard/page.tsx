@@ -263,6 +263,10 @@ export default function Dashboard() {
   const [showMainContentImages, setShowMainContentImages] = useState(true)
   const [showFinalSummary, setShowFinalSummary] = useState(true)
   const [showEditOptions, setShowEditOptions] = useState(false)
+  
+  // Custom prompt for content generation
+  const [customContentPrompt, setCustomContentPrompt] = useState('')
+  const [showCustomPrompt, setShowCustomPrompt] = useState(false)
   const [finalPageData, setFinalPageData] = useState<{
     content: string;
     faq: string;
@@ -803,11 +807,12 @@ export default function Dashboard() {
           console.log(`Generating content for keyword: ${keyword.keyword}`)
           
           const requestBody = {
-            mainKeyword: keyword.keyword, // Use the individual keyword as main keyword
+            mainKeyword: getMainKeyword(), // Use the actual main keyword (H1)
             keywords: [{
-              keyword: keyword.keyword,
+              keyword: keyword.keyword, // This is the H2 keyword
               headingType: keyword.headingType
-            }]
+            }],
+            customPrompt: customContentPrompt // Include custom prompt if provided
           }
           
           console.log('Sending request to API:', JSON.stringify(requestBody, null, 2))
@@ -3019,6 +3024,40 @@ knife maintenance tips - 1800"
                     >
                         {isGeneratingAll ? 'Generating...' : 'Generate'}
                     </button>
+                  </div>
+                  
+                  {/* Custom Content Prompt */}
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-md font-medium text-gray-700">Content Generation Prompt</h4>
+                      <button
+                        onClick={() => setShowCustomPrompt(!showCustomPrompt)}
+                        className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+                      >
+                        {showCustomPrompt ? 'Hide' : 'Show'} Custom Prompt
+                      </button>
+                    </div>
+                    
+                    {showCustomPrompt && (
+                      <div className="space-y-3">
+                        <textarea
+                          value={customContentPrompt}
+                          onChange={(e) => setCustomContentPrompt(e.target.value)}
+                          placeholder="Enter custom prompt for content generation (e.g., 'write about these keywords and all the p must be about toronto city')"
+                          className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors resize-none"
+                          rows={3}
+                        />
+                        <div className="text-sm text-gray-600">
+                          <p>💡 <strong>Examples:</strong></p>
+                          <ul className="list-disc list-inside mt-1 space-y-1">
+                            <li>"write about these keywords and all the p must be about toronto city"</li>
+                            <li>"focus on local businesses and services in the area"</li>
+                            <li>"emphasize quality and customer satisfaction"</li>
+                            <li>"include practical tips and advice for beginners"</li>
+                          </ul>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <DndContext
                     sensors={sensors}

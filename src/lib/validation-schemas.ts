@@ -111,7 +111,8 @@ export const simpleKeywordSchema = z.object({
 // Content generation schema
 export const contentGenerationSchema = z.object({
   keywords: z.array(simpleKeywordSchema).min(1).max(50),
-  mainKeyword: mainKeywordSchema
+  mainKeyword: mainKeywordSchema,
+  customPrompt: z.string().max(1000).optional()
 })
 
 // FAQ generation schema

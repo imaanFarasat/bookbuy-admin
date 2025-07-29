@@ -10,7 +10,7 @@ import { contentGenerationSchema } from '@/lib/validation-schemas'
 async function handler(request: NextRequest, validatedData: any): Promise<NextResponse> {
   try {
     console.log('Received validated data:', validatedData)
-    const { keywords, mainKeyword } = validatedData // Use validated and sanitized data
+    const { keywords, mainKeyword, customPrompt } = validatedData // Use validated and sanitized data
     
     console.log('🔍 DEBUG: mainKeyword =', mainKeyword)
     console.log('🔍 DEBUG: keywords =', keywords)
@@ -51,7 +51,7 @@ async function handler(request: NextRequest, validatedData: any): Promise<NextRe
     // Try to use OpenAI API
     // ⚠️ CRITICAL: Only provide structure to AI - let AI decide content
     try {
-      const promptContent = `Create content about ${specificKeyword}. Generate comprehensive content about this specific keyword: "${specificKeyword}".
+      let promptContent = `Create content about ${specificKeyword}. Generate comprehensive content about this specific keyword: "${specificKeyword}".
 
 Use this keyword as an h2 heading with the class "h2-body-content". Create a single content section using Bootstrap grid structure:
 
@@ -66,6 +66,12 @@ Use this keyword as an h2 heading with the class "h2-body-content". Create a sin
 </div>
 
 Generate detailed, informative content about ${specificKeyword} using <p class="p-body-content"> tags. Focus specifically on this keyword and provide valuable information about it.`
+
+      // Add custom prompt if provided
+      if (customPrompt && customPrompt.trim()) {
+        promptContent += `\n\nIMPORTANT: ${customPrompt}`
+        console.log('🔍 DEBUG: Custom prompt added:', customPrompt)
+      }
 
       console.log('🔍 DEBUG: OpenAI prompt =', promptContent)
       
