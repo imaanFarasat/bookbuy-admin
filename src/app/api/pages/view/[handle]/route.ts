@@ -430,20 +430,24 @@ export async function GET(
                                 </div>
                                 ` : ''}
                                 
-                                <!-- Related Images -->
-                                ${page.images && page.images.length > 2 ? `
-                                <div class="image-section">
-                                    <h2 class="h2-related-page">Related Images</h2>
-                                    <div class="row">
-                                        ${page.images.slice(2).map((image: any) => `
-                                        <div class="col-md-6 col-lg-4 mb-4">
-                                            <img src="${image.filePath}" alt="${image.altText}" class="content-image">
-                                            <p class="mt-2 text-muted">${image.altText}</p>
+                                <!-- Related Images (Temporarily Hidden) -->
+                                ${(() => {
+                                    // Temporarily disabled - change false to true to re-enable
+                                    const showRelatedImages = false;
+                                    return showRelatedImages && page?.images && page.images.length > 2 ? `
+                                    <div class="image-section">
+                                        <h2 class="h2-related-page">Related Images</h2>
+                                        <div class="row">
+                                            ${page.images.slice(2).map((image: any) => `
+                                            <div class="col-md-6 col-lg-4 mb-4">
+                                                <img src="${image.filePath}" alt="${image.altText}" class="content-image">
+                                                <p class="mt-2 text-muted">${image.altText}</p>
+                                            </div>
+                                            `).join('')}
                                         </div>
-                                        `).join('')}
                                     </div>
-                                </div>
-                                ` : ''}
+                                    ` : '';
+                                })()}
                             </div>
                         </div>
                     </div>
