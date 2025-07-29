@@ -60,280 +60,124 @@ export default async function DynamicPage({ params }: PageProps) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .hero-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 60px 0;
-            text-align: center;
-            margin-bottom: 40px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.3);
-            z-index: 1;
-        }
-        
-        .hero-section .container {
-            position: relative;
-            z-index: 2;
-        }
-        
-        .hero-section h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-        
-        .hero-section p {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            opacity: 0.9;
-        }
-        
-        .hero-section .btn {
-            background: #ff6b6b;
-            border: none;
-            padding: 12px 30px;
-            font-size: 1.1rem;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-        }
-        
-        .hero-section .btn:hover {
-            background: #ff5252;
-            transform: translateY(-2px);
-        }
-        
-        .hero-images {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 30px;
-        }
-        
-        .hero-image {
-            width: 200px;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-        
-        .content-section {
-            padding: 40px 0;
-        }
-        
-        .content-section h2 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-            font-size: 2.2rem;
-        }
-        
-        .content-section h3 {
-            color: #34495e;
-            margin-bottom: 15px;
-            font-size: 1.8rem;
-        }
-        
-        .content-section p {
-            margin-bottom: 20px;
-            font-size: 1.1rem;
-            line-height: 1.8;
-        }
-        
-        .image-section {
-            margin: 40px 0;
-        }
-        
-        .image-section img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        
-        .faq-section {
-            background: #f8f9fa;
-            padding: 40px 0;
-            margin: 40px 0;
-        }
-        
-        .faq-item {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .faq-question {
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        
-        .faq-answer {
-            color: #666;
-        }
-        
-        .related-articles {
-            background: #ecf0f1;
-            padding: 40px 0;
-            margin: 40px 0;
-        }
-        
-        .article-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-        
-        .article-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .breadcrumb {
-            background: #f8f9fa;
-            padding: 15px 0;
-            margin-bottom: 20px;
-        }
-        
-        .breadcrumb a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        
-        .breadcrumb a:hover {
-            text-decoration: underline;
-        }
-        
-        @media (max-width: 768px) {
-            .hero-section h1 {
-                font-size: 2rem;
-            }
-            
-            .hero-section p {
-                font-size: 1rem;
-            }
-            
-            .container {
-                padding: 10px;
-            }
-            
-            .hero-images {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .hero-image {
-                width: 100%;
-                max-width: 300px;
-            }
-        }
-    </style>
+    <!-- Original Template CSS -->
+    <link rel="stylesheet" href="/templates/templatemo_555_upright/css/templatemo-upright.css">
 </head>
 <body>
-    <div class="breadcrumb">
-        <div class="container">
-            <a href="/">Home</a> / ${page.mainKeyword}
-        </div>
-    </div>
-    
-    <div class="hero-section">
-        <div class="container">
-            <h1>${(page as any).heroSection?.h1 || page.mainKeyword}</h1>
-            ${(page as any).heroSection?.slogan ? `<p>${(page as any).heroSection.slogan}</p>` : ''}
-            ${(page as any).heroSection?.buttonUrl && (page as any).heroSection?.buttonText ? `<a href="${(page as any).heroSection.buttonUrl}" class="btn btn-light">${(page as any).heroSection.buttonText}</a>` : ''}
-            
-            ${(page as any).heroSection?.image1 || (page as any).heroSection?.image2 ? `
-            <div class="hero-images">
-                ${(page as any).heroSection?.image1 ? `<img src="${(page as any).heroSection.image1}" alt="${(page as any).heroSection?.alt1 || 'Hero Image 1'}" class="hero-image">` : ''}
-                ${(page as any).heroSection?.image2 ? `<img src="${(page as any).heroSection.image2}" alt="${(page as any).heroSection?.alt2 || 'Hero Image 2'}" class="hero-image">` : ''}
-            </div>
-            ` : page.images && page.images.length > 0 ? `
-            <div class="hero-images">
-                ${page.images.slice(0, 2).map((image: any) => `
-                    <img src="${image.filePath}" alt="${image.altText}" class="hero-image">
-                `).join('')}
-            </div>
-            ` : ''}
-        </div>
-    </div>
-    
-    <div class="content-section">
-        <div class="container">
-            ${page.content || ''}
-        </div>
-    </div>
-    
-    ${(page as any).bannerAds && (page as any).bannerAds.length > 0 ? `
-    <div class="banner-section">
-        <div class="container">
-            ${(page as any).bannerAds.map((banner: any, index: number) => `
-                <div class="banner-ad">
-                    ${banner.image?.url ? `<img src="${banner.image.url}" alt="${banner.image.alt || 'Banner Ad'}" class="img-fluid mb-3">` : ''}
-                    <h3>${banner.title || 'Banner Ad'}</h3>
-                    <p>${banner.description || ''}</p>
-                    ${banner.cta ? `<a href="#" class="btn">${banner.cta}</a>` : ''}
-                </div>
-            `).join('')}
-        </div>
-    </div>
-    ` : ''}
-    
-    ${page.faqContent ? `
-    <div class="faq-section">
-        <div class="container">
-            <h2>Frequently Asked Questions</h2>
-            ${page.faqContent}
-        </div>
-    </div>
-    ` : ''}
-    
-    ${page.images && page.images.length > 2 ? `
-    <div class="image-section">
-        <div class="container">
-            <h2>Related Images</h2>
-            <div class="row">
-                ${page.images.slice(2).map((image: any) => `
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <img src="${image.filePath}" alt="${image.altText}" class="img-fluid">
-                        <p class="mt-2 text-muted">${image.altText}</p>
+    <div class="tm-main">
+        <div class="tm-section-wrap">
+            <section class="tm-section">
+                <div class="tm-container">
+                    <div class="tm-row-home">
+                        <div class="tm-col-home">
+                            <div class="tm-text-container">
+                                <!-- Hero Section -->
+                                <div class="hero-container">
+                                    <div class="hero-section">
+                                        <div class="hero-grid">
+                                            <div class="content-left">
+                                                <div class="content-text">
+                                                    <h1 class="hero-title">
+                                                        <span class="title-something">${(page as any).heroSection?.h1 || page.mainKeyword}</span>
+                                                        <span class="title-extraordinary">${(page as any).heroSection?.slogan || ''}</span>
+                                                    </h1>
+                                                    <p class="hero-description">${(page as any).heroSection?.span || ''}</p>
+                                                    ${(page as any).heroSection?.buttonUrl && (page as any).heroSection?.buttonText ? `
+                                                    <a href="${(page as any).heroSection.buttonUrl}" class="book-button">
+                                                        ${(page as any).heroSection.buttonText}
+                                                    </a>
+                                                    ` : ''}
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="images-container">
+                                                <div class="images-grid">
+                                                    ${(page as any).heroSection?.image1 ? `
+                                                    <div class="image-wrapper">
+                                                        <img src="${(page as any).heroSection.image1}" alt="${(page as any).heroSection?.alt1 || 'Hero Image 1'}" class="hero-image">
+                                                        <div class="image-overlay overlay-first"></div>
+                                                    </div>
+                                                    ` : ''}
+                                                    ${(page as any).heroSection?.image2 ? `
+                                                    <div class="image-wrapper image-second">
+                                                        <img src="${(page as any).heroSection.image2}" alt="${(page as any).heroSection?.alt2 || 'Hero Image 2'}" class="hero-image">
+                                                        <div class="image-overlay overlay-second"></div>
+                                                    </div>
+                                                    ` : ''}
+                                                    ${!((page as any).heroSection?.image1 || (page as any).heroSection?.image2) && page.images && page.images.length > 0 ? `
+                                                    <div class="image-wrapper">
+                                                        <img src="${page.images[0].filePath}" alt="${page.images[0].altText}" class="hero-image">
+                                                        <div class="image-overlay overlay-first"></div>
+                                                    </div>
+                                                    ${page.images.length > 1 ? `
+                                                    <div class="image-wrapper image-second">
+                                                        <img src="${page.images[1].filePath}" alt="${page.images[1].altText}" class="hero-image">
+                                                        <div class="image-overlay overlay-second"></div>
+                                                    </div>
+                                                    ` : ''}
+                                                    ` : ''}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Banner Ads Section -->
+                                ${(page as any).bannerAds && (page as any).bannerAds.length > 0 ? `
+                                <div class="banner-ad-container">
+                                    ${(page as any).bannerAds.map((banner: any, index: number) => `
+                                    <div class="banner-ad-content">
+                                        <div class="banner-ad-image">
+                                            ${banner.image?.url ? `<img src="${banner.image.url}" alt="${banner.image.alt || 'Banner Ad'}" class="img-fluid">` : ''}
+                                        </div>
+                                        <div class="banner-ad-text">
+                                            <h3 class="banner-ad-title">${banner.title || 'Banner Ad'}</h3>
+                                            <p class="banner-ad-description">${banner.description || ''}</p>
+                                            ${banner.cta ? `<a href="#" class="banner-ad-btn">${banner.cta}</a>` : ''}
+                                        </div>
+                                    </div>
+                                    `).join('')}
+                                </div>
+                                ` : ''}
+                                
+                                <!-- Main Content -->
+                                <div class="content-section">
+                                    ${page.content || ''}
+                                </div>
+                                
+                                <!-- FAQ Section -->
+                                ${page.faqContent ? `
+                                <div class="faq-section">
+                                    <h2 class="h2-faq-title">Frequently Asked Questions</h2>
+                                    <hr class="mb-5">
+                                    ${page.faqContent}
+                                </div>
+                                ` : ''}
+                                
+                                <!-- Related Images -->
+                                ${page.images && page.images.length > 2 ? `
+                                <div class="image-section">
+                                    <h2 class="h2-related-page">Related Images</h2>
+                                    <div class="row">
+                                        ${page.images.slice(2).map((image: any) => `
+                                        <div class="col-md-6 col-lg-4 mb-4">
+                                            <img src="${image.filePath}" alt="${image.altText}" class="content-image">
+                                            <p class="mt-2 text-muted">${image.altText}</p>
+                                        </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
                     </div>
-                `).join('')}
-            </div>
+                </div>
+            </section>
         </div>
     </div>
-    ` : ''}
     
-    <footer class="bg-dark text-white text-center py-4 mt-5">
+    <!-- Footer -->
+    <footer class="tm-copyright">
         <div class="container">
             <p>&copy; 2024 ${page.mainKeyword}. All rights reserved.</p>
         </div>

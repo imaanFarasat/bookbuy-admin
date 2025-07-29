@@ -660,7 +660,7 @@ export default function Dashboard() {
       .join(' ')
   }
 
-
+      
 
   // Auto-generate meta fields when meta section is shown
   React.useEffect(() => {
@@ -1248,21 +1248,21 @@ export default function Dashboard() {
     try {
       // Update finalPageData with hero section (only if enabled)
       if (heroEnabled) {
-        setFinalPageData(prev => ({
-          ...prev,
-          heroSection: {
+      setFinalPageData(prev => ({
+        ...prev,
+        heroSection: {
             enabled: true,
-            h1: heroH1,
-            slogan: heroSlogan,
-            span: heroSpan,
-            buttonUrl: heroButtonUrl,
+          h1: heroH1,
+          slogan: heroSlogan,
+          span: heroSpan,
+          buttonUrl: heroButtonUrl,
             buttonText: heroButtonText,
-            image1: heroImage1,
-            image2: heroImage2,
-            alt1: heroAlt1,
-            alt2: heroAlt2
-          }
-        }))
+          image1: heroImage1,
+          image2: heroImage2,
+          alt1: heroAlt1,
+          alt2: heroAlt2
+        }
+      }))
       } else {
         // If hero is disabled, set it to null
         setFinalPageData(prev => ({
@@ -1787,7 +1787,7 @@ export default function Dashboard() {
     }
 
     setIsGeneratingImages(true)
-    setMessage('🖼️ Generating page with embedded custom styles for local compatibility...')
+          setMessage('🖼️ Generating page with embedded custom styles for local compatibility...')
 
     try {
       // Parse existing content instead of regenerating it
@@ -1999,15 +1999,15 @@ export default function Dashboard() {
 
       // 2. Replace hero section (only if enabled)
       if (dashboardData.heroSection && dashboardData.heroSection.enabled) {
-        const heroSection = `
-          <div class="content-text">
-            <h1 class="hero-title">
+      const heroSection = `
+        <div class="content-text">
+          <h1 class="hero-title">
               ${dashboardData.heroSection.h1}${dashboardData.heroSection.span ? ` - <span class="title-something">${dashboardData.heroSection.span}</span>` : ''}
-            </h1>
+          </h1>
             ${dashboardData.heroSection.slogan ? `<p class="hero-description">${dashboardData.heroSection.slogan}</p>` : ''}
-          </div>
+        </div>
           ${dashboardData.heroSection.buttonUrl && dashboardData.heroSection.buttonText ? `<button class="book-button" onclick="window.open('${dashboardData.heroSection.buttonUrl}', '_blank')">${dashboardData.heroSection.buttonText}</button>` : ''}
-          `
+        `
         templateHtml = templateHtml.replace(
         /<div class="content-text">[\s\S]*?<\/button>/,
         heroSection
@@ -2044,7 +2044,7 @@ export default function Dashboard() {
           const safeImageUrl1 = imageUrl1.startsWith('data:') ? imageUrl1 : imageUrl1
           
           const heroImage1Replaced = templateHtml.replace(
-            /<img src="https:\/\/i\.ibb\.co\/rRTw73t4\/Bea-Nail-Expert\.jpg"[^>]*>/g,
+        /<img src="https:\/\/i\.ibb\.co\/rRTw73t4\/Bea-Nail-Expert\.jpg"[^>]*>/g,
             `<img src="${safeImageUrl1}" alt="${dashboardData.heroSection.alt1 || 'Hero Image 1'}" class="hero-image w-full h-64 md:h-80 lg:h-96 xl:h-[28rem] object-cover rounded-xl shadow-lg" loading="lazy" decoding="async" onerror="this.style.display='none'; console.log('Hero image 1 failed to load: ' + this.src.substring(0, 50) + '...');" onload="console.log('Hero image 1 loaded successfully')">`
           )
           if (heroImage1Replaced === templateHtml) {
@@ -2075,7 +2075,7 @@ export default function Dashboard() {
           const safeImageUrl2 = imageUrl2.startsWith('data:') ? imageUrl2 : imageUrl2
           
           const heroImage2Replaced = templateHtml.replace(
-            /<img src="https:\/\/i\.ibb\.co\/V03Y8Y9N\/IMG-2440-1\.jpg"[^>]*>/g,
+        /<img src="https:\/\/i\.ibb\.co\/V03Y8Y9N\/IMG-2440-1\.jpg"[^>]*>/g,
             `<img src="${safeImageUrl2}" alt="${dashboardData.heroSection.alt2 || 'Hero Image 2'}" class="hero-image w-full h-64 md:h-80 lg:h-96 xl:h-[28rem] object-cover rounded-xl shadow-lg" loading="lazy" decoding="async" onerror="this.style.display='none'; console.log('Hero image 2 failed to load: ' + this.src.substring(0, 50) + '...');" onload="console.log('Hero image 2 loaded successfully')">`
           )
           if (heroImage2Replaced === templateHtml) {
@@ -2700,7 +2700,7 @@ export default function Dashboard() {
             Create AI-powered, SEO-optimized pages with automated content generation
           </p>
         </div>
-
+        
         {/* Unified Save All Button */}
         {projectConfigured && (
           <div className="mb-8">
@@ -2806,17 +2806,17 @@ export default function Dashboard() {
               <input
                 {...register('handle')}
                 type="text"
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400 transition-colors bg-gray-50"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400 transition-colors bg-gray-50"
                 placeholder="my-awesome-page"
                 readOnly={true}
               />
               {errors.handle && (
                 <p className="mt-1 text-sm text-red-600">{errors.handle.message}</p>
               )}
-              {mainKeyword && (
-                <p className="mt-1 text-xs text-gray-500">
-                  💡 Handle automatically generated from: "{mainKeyword}" → "{generateHandleFromKeyword(mainKeyword)}"
-                </p>
+                {mainKeyword && (
+                  <p className="mt-1 text-xs text-gray-500">
+                    💡 Handle automatically generated from: "{mainKeyword}" → "{generateHandleFromKeyword(mainKeyword)}"
+                  </p>
               )}
               {!mainKeyword && (
                 <p className="mt-1 text-xs text-gray-500">
@@ -3046,7 +3046,7 @@ knife maintenance tips - 1800"
                   <div className="flex justify-between items-center mb-4">
                     <h4 className="text-xl font-semibold text-gray-900">FAQ Schema</h4>
                     <div className="flex space-x-2">
-                      {isSchemaEdited ? (
+                                            {isSchemaEdited ? (
                         <div className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-lg text-sm flex items-center space-x-1">
                           <span>⚠️ Unsaved</span>
                         </div>
@@ -3075,7 +3075,7 @@ knife maintenance tips - 1800"
                       ? 'bg-green-100 text-green-800 border border-green-200' 
                       : 'bg-yellow-100 text-yellow-800 border border-yellow-200'
                   }`}>
-                    {isDatabaseSaved ? (
+                  {isDatabaseSaved ? (
                       <span className="flex items-center space-x-1">
                         <span>✅</span>
                         <span>Saved to Database</span>
@@ -3217,7 +3217,7 @@ knife maintenance tips - 1800"
                         </div>
                       </div>
                     </div>
-
+                    
                     {/* Canonical URL Option */}
                     <div>
                       <h4 className="text-lg font-semibold text-gray-900 mb-3">Canonical URL</h4>
@@ -3321,34 +3321,34 @@ knife maintenance tips - 1800"
             
             <div className="mt-6 flex justify-end">
               {!isMetaSaved ? (
-                <div className="text-center">
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-                    <div className="flex items-center justify-center">
-                      <svg className="h-5 w-5 text-yellow-400 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                      </svg>
-                      <span className="text-sm font-medium text-yellow-800">
+                        <div className="text-center">
+                          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                            <div className="flex items-center justify-center">
+                              <svg className="h-5 w-5 text-yellow-400 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                              </svg>
+                              <span className="text-sm font-medium text-yellow-800">
                         Please save Meta fields first
-                      </span>
-                    </div>
-                  </div>
-                  <button
-                    disabled
-                    className="px-4 py-2 bg-gray-400 text-white rounded-lg font-medium cursor-not-allowed"
-                  >
-                    Save & Continue
-                  </button>
-                </div>
-              ) : (
+                              </span>
+                            </div>
+                          </div>
+                          <button
+                            disabled
+                            className="px-4 py-2 bg-gray-400 text-white rounded-lg font-medium cursor-not-allowed"
+                          >
+                            Save & Continue
+                          </button>
+                        </div>
+                      ) : (
                 isHeroSaved ? (
-                  <button
-                    disabled
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg font-medium cursor-not-allowed transition-colors"
-                  >
-                    ✅ Saved & Continue
-                  </button>
-                ) : (
-                  <button
+                          <button
+                            disabled
+                            className="px-4 py-2 bg-green-600 text-white rounded-lg font-medium cursor-not-allowed transition-colors"
+                          >
+                            ✅ Saved & Continue
+                          </button>
+                        ) : (
+                          <button
                     type="button"
                     onClick={() => {
                       setShowHeroSection(false)
@@ -3358,9 +3358,9 @@ knife maintenance tips - 1800"
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     Continue to Main Content Images
-                  </button>
-                )
-              )}
+                          </button>
+                        )
+                      )}
             </div>
           </div>
         )}
@@ -3629,11 +3629,11 @@ knife maintenance tips - 1800"
                       }`}>
                         <span className="mr-2">{isMainContentImagesSaved ? '✅' : '⚠️'}</span>
                         {isMainContentImagesSaved ? 'Saved' : 'Unsaved'}
-                      </div>
+            </div>
+          </div>
+        )}
                     </div>
-                  )}
-                </div>
-              </div>
+                  </div>
             </div>
           </div>
         )}
@@ -3892,7 +3892,7 @@ knife maintenance tips - 1800"
                       onClick={() => {
                         setShowBannerAd(false)
                         setShowFinalSummary(true)
-                        setMessage('🎯 Step 4/4: Final Summary - Review and generate your page')
+                          setMessage('🎯 Step 4/4: Final Summary - Review and generate your page')
                       }}
                       className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
                     >
