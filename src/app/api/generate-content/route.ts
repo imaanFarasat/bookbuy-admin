@@ -59,7 +59,7 @@ async function handler(request: NextRequest, validatedData: any): Promise<NextRe
 
 H2 positions: ${keywords.map((keyword: any, index: number) => `${index + 1}st: ${keyword.keyword}`).join(', ')}
 
-Write comprehensive, detailed content for each H2. Use this structure:
+Write comprehensive, detailed content for each H2. Use this structure but replace the placeholder with actual content:
 
 ${keywords.map((keyword: any) => {
   const capitalizedKeyword = keyword.keyword.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')
@@ -69,7 +69,7 @@ ${keywords.map((keyword: any) => {
   </div>
   <div class="col-lg-8 mb-4">
       <h2 class="h2-body-content">${capitalizedKeyword}</h2>
-      <p class="p-body-content">[Write detailed, comprehensive content about ${keyword.keyword} - be thorough and informative]</p>
+      <p class="p-body-content">[REPLACE THIS WITH ACTUAL CONTENT about ${keyword.keyword}]</p>
   </div>
 </div>`
 }).join('\n\n')}`
@@ -80,9 +80,9 @@ ${keywords.map((keyword: any) => {
 
 H2 positions: ${keywords.map((keyword: any, index: number) => `${index + 1}st: ${keyword.keyword}`).join(', ')}
 
-User request: ${customPrompt}
+IMPORTANT USER REQUEST: ${customPrompt}
 
-Write comprehensive, detailed content for each H2. Use this structure:
+Write comprehensive, detailed content for each H2. Use this structure but replace the placeholder with actual content:
 
 ${keywords.map((keyword: any) => {
   const capitalizedKeyword = keyword.keyword.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')
@@ -92,7 +92,7 @@ ${keywords.map((keyword: any) => {
   </div>
   <div class="col-lg-8 mb-4">
       <h2 class="h2-body-content">${capitalizedKeyword}</h2>
-      <p class="p-body-content">[Write detailed, comprehensive content about ${keyword.keyword} - be thorough and informative]</p>
+      <p class="p-body-content">[REPLACE THIS WITH ACTUAL CONTENT about ${keyword.keyword}]</p>
   </div>
 </div>`
 }).join('\n\n')}`
