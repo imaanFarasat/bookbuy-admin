@@ -32,6 +32,11 @@ export default async function DynamicPage({ params }: PageProps) {
 
   if (!page) notFound()
 
+  // Parse the JSON data from the database
+  const heroSection = (page as any).heroSection ? JSON.parse((page as any).heroSection) : null
+  const bannerAds = (page as any).bannerAds ? JSON.parse((page as any).bannerAds) : []
+  const images = (page as any).images ? JSON.parse((page as any).images) : []
+
   // Generate the HTML template similar to dashboard
   const templateHtml = `
 <!DOCTYPE html>
@@ -311,13 +316,13 @@ export default async function DynamicPage({ params }: PageProps) {
     <div class="hero-section">
         <div class="container">
             <h1>${page.mainKeyword}</h1>
-            ${(page as any).heroSection?.slogan ? `<p>${(page as any).heroSection.slogan}</p>` : ''}
-            ${(page as any).heroSection?.buttonUrl ? `<a href="${(page as any).heroSection.buttonUrl}" class="btn btn-light">Learn More</a>` : ''}
+            ${heroSection?.slogan ? `<p>${heroSection.slogan}</p>` : ''}
+            ${heroSection?.buttonUrl ? `<a href="${heroSection.buttonUrl}" class="btn btn-light">Learn More</a>` : ''}
             
-            ${(page as any).heroSection?.image1 || (page as any).heroSection?.image2 ? `
+            ${heroSection?.image1 || heroSection?.image2 ? `
             <div class="hero-images">
-                ${(page as any).heroSection?.image1 ? `<img src="${(page as any).heroSection.image1}" alt="${(page as any).heroSection?.alt1 || page.mainKeyword}" class="hero-image">` : ''}
-                ${(page as any).heroSection?.image2 ? `<img src="${(page as any).heroSection.image2}" alt="${(page as any).heroSection?.alt2 || page.mainKeyword}" class="hero-image">` : ''}
+                ${heroSection?.image1 ? `<img src="${heroSection.image1}" alt="${heroSection?.alt1 || page.mainKeyword}" class="hero-image">` : ''}
+                ${heroSection?.image2 ? `<img src="${heroSection.image2}" alt="${heroSection?.alt2 || page.mainKeyword}" class="hero-image">` : ''}
             </div>
             ` : ''}
         </div>
@@ -329,10 +334,10 @@ export default async function DynamicPage({ params }: PageProps) {
         </div>
     </div>
     
-    ${(page as any).bannerAds && (page as any).bannerAds.length > 0 ? `
+    ${bannerAds && bannerAds.length > 0 ? `
     <div class="banner-section">
         <div class="container">
-            ${(page as any).bannerAds.map((banner: any) => `
+            ${bannerAds.map((banner: any) => `
                 <div class="banner-ad">
                     ${banner.image ? `<img src="${banner.image}" alt="Banner Ad">` : ''}
                     <h3>${banner.title || 'Special Offer'}</h3>
@@ -353,12 +358,12 @@ export default async function DynamicPage({ params }: PageProps) {
     </div>
     ` : ''}
     
-    ${(page as any).images && (page as any).images.length > 0 ? `
+    ${images && images.length > 0 ? `
     <div class="image-section">
         <div class="container">
             <h2>Related Images</h2>
             <div class="row">
-                ${(page as any).images.map((image: any) => `
+                ${images.map((image: any) => `
                     <div class="col-md-6 col-lg-4 mb-4">
                         <img src="${image.filePath}" alt="${image.altText}" class="img-fluid">
                         <p class="mt-2 text-muted">${image.altText}</p>
