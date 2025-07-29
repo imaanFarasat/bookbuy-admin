@@ -86,13 +86,70 @@ async function handler(request: NextRequest, validatedData: any): Promise<NextRe
   `(${index + 1}) Keyword: "${keyword.keyword}"\nInstruction: ${keyword.customPrompt}`
 ).join('\n\n')
 
-      let promptContent = `You are a content writer. Write specific, detailed content for each H2 keyword.
+      // Create a comprehensive prompt that includes all keywords
+      const allKeywordsList = keywords.map((k: any, index: number) => 
+        `${index + 1}. ${k.keyword}`
+      ).join('\n')
 
-Here are H2 keywords and their specific writing instructions:
+      // Detect content type based on keywords and main keyword
+      const detectContentType = (mainKeyword: string, keywords: any[]) => {
+        const allText = (mainKeyword + ' ' + keywords.map(k => k.keyword).join(' ')).toLowerCase()
+        
+        if (allText.includes('near me') || allText.includes('in ') || allText.includes('near ')) {
+          return 'LOCAL_BUSINESS'
+        } else if (allText.includes('review') || allText.includes('best ') || allText.includes('top ')) {
+          return 'PRODUCT_REVIEW'
+        } else if (allText.includes('guide') || allText.includes('how to') || allText.includes('tips')) {
+          return 'HOW_TO_GUIDE'
+        } else if (allText.includes('service') || allText.includes('professional')) {
+          return 'SERVICE_GUIDE'
+        } else {
+          return 'GENERAL_INFORMATIVE'
+        }
+      }
 
+      const contentType = detectContentType(mainKeyword, keywords)
+      
+      // Create content type specific instructions
+      const getContentTypeInstructions = (type: string) => {
+        switch (type) {
+          case 'LOCAL_BUSINESS':
+            return `Focus on local business information, services, locations, and customer benefits. Include practical details about what customers can expect.`
+          case 'PRODUCT_REVIEW':
+            return `Provide detailed product analysis, features, pros and cons, and recommendations. Include specific details and comparisons.`
+          case 'HOW_TO_GUIDE':
+            return `Create step-by-step instructions, tips, and practical advice. Make it actionable and easy to follow.`
+          case 'SERVICE_GUIDE':
+            return `Explain services, benefits, processes, and what to expect. Include professional insights and industry knowledge.`
+          default:
+            return `Provide comprehensive, informative content with practical insights and valuable information.`
+        }
+      }
+
+      let promptContent = `You are a professional content writer specializing in creating detailed, informative content for web pages. 
+
+MAIN TOPIC: ${mainKeyword}
+CONTENT TYPE: ${contentType}
+CONTENT FOCUS: ${getContentTypeInstructions(contentType)}
+
+H2 KEYWORDS TO WRITE ABOUT:
+${allKeywordsList}
+
+${specificInstructions ? `SPECIFIC INSTRUCTIONS:
 ${specificInstructions}
 
-Write detailed, specific content for each keyword in the same order. Do not skip any. Focus on the actual topic and follow the custom instructions exactly. Write real, helpful content - not generic placeholders.
+` : ''}Write detailed, specific content for each keyword in the same order. Do not skip any. Focus on the actual topic and write real, helpful content - not generic placeholders.
+
+IMPORTANT REQUIREMENTS:
+- Write about each keyword specifically and in detail
+- Make content informative and valuable for readers
+- Use natural, engaging language that flows well
+- Include practical information, tips, and insights
+- Keep each section focused on its keyword
+- Provide specific details and actionable advice
+- Adapt tone and style to the content type (${contentType})
+- Each paragraph should be substantial (150-300 words)
+- Write in a professional but accessible tone
 
 Respond with only the content paragraphs, one per line, in the same order as the keywords.`
 
@@ -122,12 +179,26 @@ Respond with only the content paragraphs, one per line, in the same order as the
         model: "gpt-3.5-turbo",
         messages: [
           {
+            role: "system",
+            content: `You are a professional content writer specializing in creating detailed, informative content for web pages. Your task is to write specific content for each H2 keyword provided. 
+
+IMPORTANT REQUIREMENTS:
+- Write detailed, informative content for each keyword
+- Focus on providing value and practical information
+- Use natural, engaging language
+- Include specific details, tips, and insights
+- Make content helpful for readers searching for this information
+- Avoid generic or placeholder content
+- Each paragraph should be substantial (150-300 words)
+- Write in a professional but accessible tone`
+          },
+          {
             role: "user",
             content: promptContent
           }
         ],
-        max_tokens: 4000,
-        temperature: 0.9
+        max_tokens: 6000,
+        temperature: 0.7
       })
 
       const aiContent = completion.choices[0]?.message?.content || ''

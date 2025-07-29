@@ -105,7 +105,8 @@ export const simpleKeywordSchema = z.object({
     .refine(val => !val.includes('<script') && !val.includes('javascript:') && !val.includes('data:text/html'), {
       message: 'Keyword contains malicious content'
     }),
-  headingType: z.enum(['h2', 'h3']).default('h2')
+  headingType: z.enum(['h2', 'h3']).default('h2'),
+  customPrompt: z.string().max(1000).optional()
 })
 
 // Content generation schema

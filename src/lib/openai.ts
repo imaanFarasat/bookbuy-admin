@@ -4,6 +4,39 @@ export const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
+// Content type detection utility
+export const detectContentType = (mainKeyword: string, keywords: string[] = []) => {
+  const allText = (mainKeyword + ' ' + keywords.join(' ')).toLowerCase()
+  
+  if (allText.includes('near me') || allText.includes('in ') || allText.includes('near ')) {
+    return 'LOCAL_BUSINESS'
+  } else if (allText.includes('review') || allText.includes('best ') || allText.includes('top ')) {
+    return 'PRODUCT_REVIEW'
+  } else if (allText.includes('guide') || allText.includes('how to') || allText.includes('tips')) {
+    return 'HOW_TO_GUIDE'
+  } else if (allText.includes('service') || allText.includes('professional')) {
+    return 'SERVICE_GUIDE'
+  } else {
+    return 'GENERAL_INFORMATIVE'
+  }
+}
+
+// Content type specific instructions
+export const getContentTypeInstructions = (type: string) => {
+  switch (type) {
+    case 'LOCAL_BUSINESS':
+      return `Focus on local business information, services, locations, and customer benefits. Include practical details about what customers can expect.`
+    case 'PRODUCT_REVIEW':
+      return `Provide detailed product analysis, features, pros and cons, and recommendations. Include specific details and comparisons.`
+    case 'HOW_TO_GUIDE':
+      return `Create step-by-step instructions, tips, and practical advice. Make it actionable and easy to follow.`
+    case 'SERVICE_GUIDE':
+      return `Explain services, benefits, processes, and what to expect. Include professional insights and industry knowledge.`
+    default:
+      return `Provide comprehensive, informative content with practical insights and valuable information.`
+  }
+}
+
 // Function calling tools for content generation
 export const contentGenerationTools = [
   {
@@ -19,7 +52,7 @@ export const contentGenerationTools = [
             description: "Type of business (e.g., nail salon, restaurant, spa)"
           },
           location: {
-            type: "string", 
+            type: "string",
             description: "Location (e.g., downtown Toronto, New York)"
           },
           count: {

@@ -21,25 +21,28 @@ async function handler(request: NextRequest) {
         messages: [
           {
             role: "system",
-            content: `You are a content expert. Generate a compelling meta title and meta description for a webpage.
+            content: `You are a content expert specializing in SEO meta titles and descriptions. Generate compelling meta tags based on the content type and main keyword.
 
 CRITICAL REQUIREMENTS - STRICTLY ENFORCE THESE LIMITS:
 - Meta Title: MAXIMUM 60 CHARACTERS (including spaces)
 - Meta Description: MAXIMUM 160 CHARACTERS (including spaces)
+
+CONTENT TYPE DETECTION:
+- LOCAL_BUSINESS: Focus on location, services, and local benefits
+- PRODUCT_REVIEW: Focus on reviews, comparisons, and recommendations  
+- HOW_TO_GUIDE: Focus on instructions, tips, and learning
+- SERVICE_GUIDE: Focus on professional services and expertise
+- GENERAL_INFORMATIVE: Focus on comprehensive information and insights
 
 IMPORTANT RULES:
 1. ALWAYS include the main keyword in both meta title and meta description
 2. NEVER exceed the character limits
 3. Count every character including spaces and punctuation
 4. Make the meta tags engaging and click-worthy
-5. Analyze the provided content and FAQ to understand the page topic
+5. Adapt tone to the content type
+6. Analyze the provided content and FAQ to understand the page topic
 
-Return only a JSON object with "metaTitle" and "metaDescription" fields.
-Example format:
-{
-  "metaTitle": "Best Nail Salons Near Me - Top Rated Services",
-  "metaDescription": "Find the best nail salons near you. Professional manicures, pedicures, and nail art services. Book your appointment today!"
-}`
+Return only a JSON object with "metaTitle" and "metaDescription" fields.`
           },
           {
             role: "user",
@@ -128,103 +131,155 @@ import { withSimpleRateLimit, openAILimiter } from '@/lib/rate-limiter-simple'
 export const POST = withSimpleRateLimit(handler, openAILimiter)
 
 function generateFallbackMetaTitle(mainKeyword: string): string {
-  // Check if it's a location-based keyword
-  const isLocationBased = mainKeyword.toLowerCase().includes('near me') || 
-                         mainKeyword.toLowerCase().includes('in ') || 
-                         mainKeyword.toLowerCase().includes('near ')
-  
-  if (isLocationBased) {
-    // Clean the keyword for location-based titles
-    const cleanKeyword = mainKeyword
-      .replace(/ near me/gi, '')
-      .replace(/ in [a-zA-Z\s]+/gi, '')
-      .replace(/ near [a-zA-Z\s]+/gi, '')
-      .trim()
-    
-    const locationTitles = [
-      `Find Best ${cleanKeyword} Near You - Local Services`,
-      `Top ${cleanKeyword} - Local & Nearby Services`,
-      `Best Local ${cleanKeyword} - Find & Book Today`,
-      `${cleanKeyword} Near Me - Local Services Available`,
-      `Find ${cleanKeyword} - Best Local Options`
-    ]
-    
-    let title = locationTitles[Math.floor(Math.random() * locationTitles.length)]
-    
-    // Ensure it doesn't exceed 60 characters
-    if (title.length > 60) {
-      title = title.substring(0, 57) + '...'
+  // Detect content type from keyword
+  const detectContentType = (keyword: string) => {
+    const lowerKeyword = keyword.toLowerCase()
+    if (lowerKeyword.includes('near me') || lowerKeyword.includes('in ') || lowerKeyword.includes('near ')) {
+      return 'LOCAL_BUSINESS'
+    } else if (lowerKeyword.includes('review') || lowerKeyword.includes('best ') || lowerKeyword.includes('top ')) {
+      return 'PRODUCT_REVIEW'
+    } else if (lowerKeyword.includes('guide') || lowerKeyword.includes('how to') || lowerKeyword.includes('tips')) {
+      return 'HOW_TO_GUIDE'
+    } else if (lowerKeyword.includes('service') || lowerKeyword.includes('professional')) {
+      return 'SERVICE_GUIDE'
+    } else {
+      return 'GENERAL_INFORMATIVE'
     }
-    
-    return title
-  } else {
-    // Non-location keywords - avoid generic patterns
-    const titles = [
-      `${mainKeyword} - Expert Guide & Tips`,
-      `Best ${mainKeyword} - Complete Overview`,
-      `${mainKeyword} Guide - Expert Recommendations`,
-      `Professional ${mainKeyword} - Expert Tips`,
-      `${mainKeyword} - Complete Guide & Expert Advice`
-    ]
-    
-    let title = titles[Math.floor(Math.random() * titles.length)]
-    
-    // Ensure it doesn't exceed 60 characters
-    if (title.length > 60) {
-      title = title.substring(0, 57) + '...'
-    }
-    
-    return title
   }
+
+  const contentType = detectContentType(mainKeyword)
+  const cleanKeyword = mainKeyword.trim()
+  
+  // Generate titles based on content type
+  const getTitlesByType = (type: string, keyword: string) => {
+    switch (type) {
+      case 'LOCAL_BUSINESS':
+        return [
+          `${keyword} Near Me - Local Services`,
+          `Best ${keyword} - Local & Nearby`,
+          `Find ${keyword} - Local Services`,
+          `${keyword} - Local Professional Services`,
+          `Top ${keyword} - Local Options`
+        ]
+      case 'PRODUCT_REVIEW':
+        return [
+          `${keyword} - Expert Review & Guide`,
+          `Best ${keyword} - Complete Review`,
+          `${keyword} Review - Expert Analysis`,
+          `Top ${keyword} - Expert Recommendations`,
+          `${keyword} - Comprehensive Review`
+        ]
+      case 'HOW_TO_GUIDE':
+        return [
+          `${keyword} - Complete Guide & Tips`,
+          `How to ${keyword} - Expert Guide`,
+          `${keyword} Guide - Step-by-Step`,
+          `${keyword} - Professional Guide`,
+          `${keyword} - Expert Tips & Guide`
+        ]
+      case 'SERVICE_GUIDE':
+        return [
+          `${keyword} - Professional Services`,
+          `${keyword} Services - Expert Guide`,
+          `${keyword} - Professional Solutions`,
+          `${keyword} - Expert Service Guide`,
+          `${keyword} - Professional Expertise`
+        ]
+      default:
+        return [
+          `${keyword} - Complete Guide & Expert Tips`,
+          `${keyword} Guide - Professional Insights`,
+          `${keyword} - Expert Recommendations`,
+          `${keyword} - Comprehensive Overview`,
+          `${keyword} - Professional Guide & Tips`
+        ]
+    }
+  }
+  
+  const titles = getTitlesByType(contentType, cleanKeyword)
+  let title = titles[Math.floor(Math.random() * titles.length)]
+  
+  // Ensure it doesn't exceed 60 characters
+  if (title.length > 60) {
+    title = title.substring(0, 57) + '...'
+  }
+  
+  return title
 }
 
 function generateFallbackMetaDescription(mainKeyword: string): string {
-  // Check if it's a location-based keyword
-  const isLocationBased = mainKeyword.toLowerCase().includes('near me') || 
-                         mainKeyword.toLowerCase().includes('in ') || 
-                         mainKeyword.toLowerCase().includes('near ')
-  
-  if (isLocationBased) {
-    // Clean the keyword for location-based descriptions
-    const cleanKeyword = mainKeyword
-      .replace(/ near me/gi, '')
-      .replace(/ in [a-zA-Z\s]+/gi, '')
-      .replace(/ near [a-zA-Z\s]+/gi, '')
-      .trim()
-    
-    const locationDescriptions = [
-      `Find the best ${cleanKeyword} near you. Local services, convenient locations, and expert quality. Book your appointment today.`,
-      `Discover top-rated ${cleanKeyword} in your area. Local professionals, convenient scheduling, and excellent service.`,
-      `Find local ${cleanKeyword} services near you. Expert professionals, convenient locations, and quality service.`,
-      `Best ${cleanKeyword} near me - local services with expert quality and convenient scheduling.`,
-      `Find and book ${cleanKeyword} services in your area. Local professionals, quality service, and convenient locations.`
-    ]
-    
-    let description = locationDescriptions[Math.floor(Math.random() * locationDescriptions.length)]
-    
-    // Ensure it doesn't exceed 160 characters
-    if (description.length > 160) {
-      description = description.substring(0, 157) + '...'
+  // Detect content type from keyword
+  const detectContentType = (keyword: string) => {
+    const lowerKeyword = keyword.toLowerCase()
+    if (lowerKeyword.includes('near me') || lowerKeyword.includes('in ') || lowerKeyword.includes('near ')) {
+      return 'LOCAL_BUSINESS'
+    } else if (lowerKeyword.includes('review') || lowerKeyword.includes('best ') || lowerKeyword.includes('top ')) {
+      return 'PRODUCT_REVIEW'
+    } else if (lowerKeyword.includes('guide') || lowerKeyword.includes('how to') || lowerKeyword.includes('tips')) {
+      return 'HOW_TO_GUIDE'
+    } else if (lowerKeyword.includes('service') || lowerKeyword.includes('professional')) {
+      return 'SERVICE_GUIDE'
+    } else {
+      return 'GENERAL_INFORMATIVE'
     }
-    
-    return description
-  } else {
-    // Non-location keywords
-    const descriptions = [
-      `Expert guide to ${mainKeyword} with professional tips, recommendations, and everything you need to know.`,
-      `Complete ${mainKeyword} guide with expert advice, tips, and professional recommendations.`,
-      `Professional ${mainKeyword} guide with expert insights and comprehensive information.`,
-      `Expert ${mainKeyword} advice with tips, recommendations, and professional guidance.`,
-      `Complete ${mainKeyword} information with expert tips and professional recommendations.`
-    ]
-    
-    let description = descriptions[Math.floor(Math.random() * descriptions.length)]
-    
-    // Ensure it doesn't exceed 160 characters
-    if (description.length > 160) {
-      description = description.substring(0, 157) + '...'
-    }
-    
-    return description
   }
+
+  const contentType = detectContentType(mainKeyword)
+  const cleanKeyword = mainKeyword.trim()
+  
+  // Generate descriptions based on content type
+  const getDescriptionsByType = (type: string, keyword: string) => {
+    switch (type) {
+      case 'LOCAL_BUSINESS':
+        return [
+          `Find the best ${keyword} near you. Local services, convenient locations, and expert quality. Book your appointment today.`,
+          `Discover top-rated ${keyword} in your area. Local professionals, convenient scheduling, and excellent service.`,
+          `Find local ${keyword} services near you. Expert professionals, convenient locations, and quality service.`,
+          `Best ${keyword} near me - local services with expert quality and convenient scheduling.`,
+          `Find and book ${keyword} services in your area. Local professionals, quality service, and convenient locations.`
+        ]
+      case 'PRODUCT_REVIEW':
+        return [
+          `Expert review of ${keyword} with detailed analysis, pros and cons, and recommendations. Make informed decisions.`,
+          `Comprehensive ${keyword} review with expert insights, comparisons, and buying recommendations.`,
+          `Detailed ${keyword} analysis with expert opinions, features, and professional recommendations.`,
+          `Best ${keyword} review with expert evaluation, comparisons, and buying guide.`,
+          `Complete ${keyword} review with expert analysis, recommendations, and detailed insights.`
+        ]
+      case 'HOW_TO_GUIDE':
+        return [
+          `Complete guide to ${keyword} with step-by-step instructions, expert tips, and professional advice.`,
+          `Learn how to ${keyword} with expert guidance, practical tips, and comprehensive instructions.`,
+          `Professional ${keyword} guide with detailed steps, expert tips, and practical advice.`,
+          `Expert ${keyword} tutorial with step-by-step instructions and professional insights.`,
+          `Comprehensive ${keyword} guide with expert tips, detailed instructions, and professional advice.`
+        ]
+      case 'SERVICE_GUIDE':
+        return [
+          `Professional ${keyword} services with expert guidance, quality assurance, and comprehensive solutions.`,
+          `Expert ${keyword} services with professional expertise, quality results, and comprehensive support.`,
+          `Professional ${keyword} guide with expert insights, quality service, and comprehensive solutions.`,
+          `${keyword} services with professional expertise, quality assurance, and expert guidance.`,
+          `Expert ${keyword} solutions with professional service, quality results, and comprehensive support.`
+        ]
+      default:
+        return [
+          `Comprehensive guide to ${keyword} with expert insights, practical tips, and professional recommendations.`,
+          `Expert ${keyword} guide with detailed information, best practices, and professional advice.`,
+          `Complete ${keyword} overview with expert tips, recommendations, and comprehensive insights.`,
+          `Professional ${keyword} guide with expert advice, practical tips, and detailed information.`,
+          `In-depth ${keyword} guide with expert insights, recommendations, and professional tips.`
+        ]
+    }
+  }
+  
+  const descriptions = getDescriptionsByType(contentType, cleanKeyword)
+  let description = descriptions[Math.floor(Math.random() * descriptions.length)]
+  
+  // Ensure it doesn't exceed 160 characters
+  if (description.length > 160) {
+    description = description.substring(0, 157) + '...'
+  }
+  
+  return description
 } 
