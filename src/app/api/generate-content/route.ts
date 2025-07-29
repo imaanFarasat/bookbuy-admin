@@ -73,6 +73,7 @@ async function handler(request: NextRequest, validatedData: any): Promise<NextRe
     // Try to use OpenAI API
     // ⚠️ CRITICAL: Only provide structure to AI - let AI decide content
     try {
+      // Build prompt with individual custom prompts for each keyword
       let promptContent = `Create detailed content for these H2 keywords: ${allKeywords.join(', ')}. 
 
 H2 positions: ${keywords.map((keyword: any, index: number) => `${index + 1}st: ${keyword.keyword}`).join(', ')}
@@ -81,44 +82,34 @@ Write comprehensive, detailed content for each H2. Use this structure but replac
 
 ${keywords.map((keyword: any) => {
   const capitalizedKeyword = keyword.keyword.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')
+  const individualPrompt = keyword.customPrompt ? `\n\nSPECIFIC INSTRUCTION FOR "${keyword.keyword}": ${keyword.customPrompt}` : ''
   return `<div class="row mb-4">
   <div class="col-lg-4 mb-4">
       <!-- Image will be added by user later -->
   </div>
   <div class="col-lg-8 mb-4">
       <h2 class="h2-body-content">${capitalizedKeyword}</h2>
-      <p class="p-body-content">[REPLACE THIS WITH ACTUAL CONTENT about ${keyword.keyword}]</p>
+      <p class="p-body-content">[REPLACE THIS WITH ACTUAL CONTENT about ${keyword.keyword}]${individualPrompt}</p>
   </div>
 </div>`
 }).join('\n\n')}`
 
-      // Add custom prompt if provided
+      // Add global custom prompt if provided
       if (customPrompt && customPrompt.trim()) {
-        promptContent = `🚨 CRITICAL INSTRUCTION: ${customPrompt}
+        promptContent = `🚨 GLOBAL INSTRUCTION: ${customPrompt}
 
-Create detailed content for these H2 keywords: ${allKeywords.join(', ')}. 
+${promptContent}
 
-H2 positions: ${keywords.map((keyword: any, index: number) => `${index + 1}st: ${keyword.keyword}`).join(', ')}
-
-You MUST follow the critical instruction above. Generate actual content, not placeholders.
-
-Use this structure and write real content:
-
-${keywords.map((keyword: any) => {
-  const capitalizedKeyword = keyword.keyword.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')
-  return `<div class="row mb-4">
-  <div class="col-lg-4 mb-4">
-      <!-- Image will be added by user later -->
-  </div>
-  <div class="col-lg-8 mb-4">
-      <h2 class="h2-body-content">${capitalizedKeyword}</h2>
-      <p class="p-body-content">[WRITE REAL CONTENT HERE - NOT A PLACEHOLDER]</p>
-  </div>
-</div>`
-}).join('\n\n')}`
-        console.log('🔍 DEBUG: Custom prompt added:', customPrompt)
-        console.log('🔍 DEBUG: Full prompt with custom instruction:', promptContent)
+IMPORTANT: Follow the global instruction above AND any specific instructions for individual H2s.`
+        console.log('🔍 DEBUG: Global custom prompt added:', customPrompt)
       }
+
+      // Log individual prompts
+      keywords.forEach((keyword: any, index: number) => {
+        if (keyword.customPrompt) {
+          console.log(`🔍 DEBUG: Individual prompt for "${keyword.keyword}": ${keyword.customPrompt}`)
+        }
+      })
 
       console.log('🔍 DEBUG: Keywords being processed:', allKeywords)
       console.log('🔍 DEBUG: Number of keywords:', allKeywords.length)

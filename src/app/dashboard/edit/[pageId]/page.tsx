@@ -42,6 +42,7 @@ interface KeywordData {
   category: string
   selected: boolean
   headingType: 'h2' | 'h3'
+  customPrompt?: string
 }
 
 interface PageImage {
@@ -93,13 +94,15 @@ function SortableKeywordItem({
   index, 
   toggleKeyword, 
   changeHeadingType,
-  removeKeyword
+  removeKeyword,
+  updateCustomPrompt
 }: { 
   keyword: KeywordData
   index: number
   toggleKeyword: (index: number) => void
   changeHeadingType: (index: number) => void
   removeKeyword: (index: number) => void
+  updateCustomPrompt: (index: number, prompt: string) => void
 }) {
   const {
     attributes,
@@ -166,6 +169,27 @@ function SortableKeywordItem({
         <div>Volume: {keyword.volume?.toLocaleString() || 'N/A'}</div>
         <div>Category: {keyword.category || 'General'}</div>
         <div>Type: {keyword.headingType.toUpperCase()}</div>
+      </div>
+      
+      {/* Custom Prompt Input */}
+      <div className="mt-3">
+        <label className="block text-xs font-medium text-gray-700 mb-1">
+          Custom Prompt (Optional)
+        </label>
+        <textarea
+          value={keyword.customPrompt || ''}
+          onChange={(e) => {
+            e.stopPropagation()
+            updateCustomPrompt(index, e.target.value)
+          }}
+          placeholder={`Custom instructions for "${keyword.keyword}" (e.g., "Add bullet points", "Focus on Toronto", "Include 10 examples")`}
+          className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-colors resize-none"
+          rows={2}
+          onClick={(e) => e.stopPropagation()}
+        />
+        <div className="text-xs text-gray-500 mt-1">
+          💡 Leave empty to use default content generation
+        </div>
       </div>
     </div>
   )
@@ -354,6 +378,12 @@ export default function EditPage() {
   const changeHeadingType = (index: number) => {
     setKeywords(prev => prev.map((kw, i) => 
       i === index ? { ...kw, headingType: kw.headingType === 'h2' ? 'h3' : 'h2' } : kw
+    ))
+  }
+
+  const updateCustomPrompt = (index: number, prompt: string) => {
+    setKeywords(prev => prev.map((kw, i) => 
+      i === index ? { ...kw, customPrompt: prompt } : kw
     ))
   }
 
@@ -723,6 +753,7 @@ export default function EditPage() {
                       toggleKeyword={toggleKeyword}
                       changeHeadingType={changeHeadingType}
                       removeKeyword={removeKeyword}
+                      updateCustomPrompt={updateCustomPrompt}
                     />
                   ))}
                   

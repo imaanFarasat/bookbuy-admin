@@ -420,7 +420,6 @@ export async function GET(
                                     <div class="container">
                                         <div class="row">
                                             <div class="col-lg-12">
-                                                <h2 class="h2-faq mb-4">Frequently Asked Questions</h2>
                                                 <div class="faq-content">
                                                     ${page.faqContent}
                                                 </div>

@@ -43,6 +43,7 @@ interface KeywordData {
   category: string
   selected: boolean
   headingType: 'h2' | 'h3'
+  customPrompt?: string
 }
 
 // Enhanced image fitting system (moved outside component for access)
@@ -155,13 +156,15 @@ function SortableKeywordItem({
   index, 
   toggleKeyword, 
   changeHeadingType,
-  removeKeyword
+  removeKeyword,
+  updateCustomPrompt
 }: { 
   keyword: KeywordData
   index: number
   toggleKeyword: (index: number) => void
   changeHeadingType: (index: number) => void
   removeKeyword: (index: number) => void
+  updateCustomPrompt: (index: number, prompt: string) => void
 }) {
   const {
     attributes,
@@ -181,14 +184,14 @@ function SortableKeywordItem({
     <div
       ref={setNodeRef}
       style={style}
-      className={`p-4 border rounded-lg cursor-pointer transition-all duration-200 ${
+      className={`p-4 border rounded-lg transition-all duration-200 ${
         keyword.selected 
           ? 'border-gray-900 bg-gray-50 shadow-sm' 
           : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
       } ${isDragging ? 'opacity-50' : ''}`}
-      onClick={() => toggleKeyword(index)}
     >
-      <div className="flex items-center justify-between">
+      {/* Header Row */}
+      <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-3">
           <div
             {...attributes}
@@ -205,6 +208,19 @@ function SortableKeywordItem({
           </div>
         </div>
         <div className="flex items-center space-x-2">
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              toggleKeyword(index)
+            }}
+            className={`px-3 py-1 text-xs rounded-lg ${
+              keyword.selected 
+                ? 'bg-gray-900 text-white' 
+                : 'bg-gray-100 text-gray-700 border border-gray-300'
+            }`}
+          >
+            {keyword.selected ? 'Selected' : 'Select'}
+          </button>
           <button
             onClick={(e) => {
               e.stopPropagation()
@@ -227,6 +243,27 @@ function SortableKeywordItem({
           >
             Remove
           </button>
+        </div>
+      </div>
+      
+      {/* Custom Prompt Input */}
+      <div className="mt-3">
+        <label className="block text-xs font-medium text-gray-700 mb-1">
+          Custom Prompt (Optional)
+        </label>
+        <textarea
+          value={keyword.customPrompt || ''}
+          onChange={(e) => {
+            e.stopPropagation()
+            updateCustomPrompt(index, e.target.value)
+          }}
+          placeholder={`Custom instructions for "${keyword.keyword}" (e.g., "Add bullet points", "Focus on Toronto", "Include 10 examples")`}
+          className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-colors resize-none"
+          rows={2}
+          onClick={(e) => e.stopPropagation()}
+        />
+        <div className="text-xs text-gray-500 mt-1">
+          💡 Leave empty to use default content generation
         </div>
       </div>
     </div>
@@ -750,6 +787,13 @@ export default function Dashboard() {
     ))
   }
 
+  // Update custom prompt for a specific keyword
+  const updateCustomPrompt = (index: number, prompt: string) => {
+    setKeywords(prev => prev.map((k, i) => 
+      i === index ? { ...k, customPrompt: prompt } : k
+    ))
+  }
+
   // Add manual keyword
   const addManualKeyword = () => {
     if (!manualKeywordInput.trim()) {
@@ -810,9 +854,10 @@ export default function Dashboard() {
           mainKeyword: getMainKeyword(), // Use the actual main keyword (H1)
           keywords: selectedKeywords.map(k => ({
             keyword: k.keyword,
-            headingType: k.headingType
+            headingType: k.headingType,
+            customPrompt: k.customPrompt || '' // Include individual custom prompts
           })),
-          customPrompt: customContentPrompt // Include custom prompt if provided
+          customPrompt: customContentPrompt // Keep global prompt for backward compatibility
         }
         
         console.log('Sending request to API for all keywords:', JSON.stringify(requestBody, null, 2))
@@ -3033,42 +3078,24 @@ knife maintenance tips - 1800"
                     </button>
                   </div>
                   
-                  {/* Custom Content Prompt */}
+                  {/* Individual Custom Prompts */}
                   <div className="mb-6">
                     <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-md font-medium text-gray-700">Content Generation Prompt</h4>
-                      <button
-                        onClick={() => setShowCustomPrompt(!showCustomPrompt)}
-                        className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
-                      >
-                        {showCustomPrompt ? 'Hide' : 'Show'} Custom Prompt
-                      </button>
+                      <h4 className="text-md font-medium text-gray-700">Individual H2 Prompts</h4>
+                      <div className="text-sm text-gray-500">
+                        💡 Each H2 can have its own custom prompt
+                      </div>
                     </div>
                     
-                    {showCustomPrompt && (
-                      <div className="space-y-3">
-                        <textarea
-                          value={customContentPrompt}
-                          onChange={(e) => setCustomContentPrompt(e.target.value)}
-                          placeholder="Enter custom instructions (e.g., 'Add bullet points to the 2nd H2' or 'All content must be about Toronto city')"
-                          className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors resize-none"
-                          rows={3}
-                        />
-                        <div className="text-sm text-gray-600">
-                          <p>💡 <strong>Examples:</strong></p>
-                          <ul className="list-disc list-inside mt-1 space-y-1">
-                            <li>"Add bullet points to the 2nd H2"</li>
-                            <li>"Make the 3rd H2 a comparison table"</li>
-                            <li>"All content must be about Toronto city"</li>
-                            <li>"Use lists in the 1st and 4th H2s"</li>
-                            <li>"Focus on local businesses and services"</li>
-                            <li>"Include practical tips and advice"</li>
-                            <li>"For 2nd H2, list 10 specific businesses with names and descriptions"</li>
-                            <li>"In 3rd H2, mention real locations and addresses"</li>
-                          </ul>
-                        </div>
-                      </div>
-                    )}
+                    <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
+                      <p><strong>💡 How it works:</strong></p>
+                      <ul className="list-disc list-inside mt-1 space-y-1">
+                        <li>Each H2 keyword now has its own prompt field</li>
+                        <li>Leave empty to use default content generation</li>
+                        <li>Examples: "Add bullet points", "Focus on Toronto", "Include 10 examples"</li>
+                        <li>You can target specific H2s with custom instructions</li>
+                      </ul>
+                    </div>
                   </div>
                   <DndContext
                     sensors={sensors}
@@ -3088,6 +3115,7 @@ knife maintenance tips - 1800"
                             toggleKeyword={toggleKeyword}
                             changeHeadingType={changeHeadingType}
                             removeKeyword={removeKeyword}
+                            updateCustomPrompt={updateCustomPrompt}
                           />
                         ))}
                         {/* Add Manual Keyword Button and Input at the end of the list */}
