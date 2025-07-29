@@ -207,6 +207,31 @@ export async function GET(
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Client-side Debug Script -->
+    <script>
+        console.log('CLIENT-SIDE DEBUG: Page loaded');
+        console.log('Page URL:', window.location.href);
+        console.log('Content sections found:', document.querySelectorAll('.content-section').length);
+        console.log('IMG tags found:', document.querySelectorAll('img').length);
+        console.log('Image placeholders found:', (document.body.innerHTML.match(/<!-- Image will be added by user later -->/g) || []).length);
+        console.log('H2 tags found:', document.querySelectorAll('h2').length);
+        
+        // Log all images
+        document.querySelectorAll('img').forEach(function(img, index) {
+            console.log('Image ' + index + ':', {
+                src: img.src,
+                alt: img.alt,
+                className: img.className,
+                visible: img.offsetWidth > 0 && img.offsetHeight > 0
+            });
+        });
+        
+        // Log all H2 sections
+        document.querySelectorAll('h2').forEach(function(h2, index) {
+            console.log('H2 ' + index + ':', h2.textContent.trim());
+        });
+    </script>
 </body>
 </html>
     `
