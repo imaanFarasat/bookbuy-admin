@@ -1,0 +1,121 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  name            String
+  passwordHash    String
+  subscriptionTier String  @default("free")
+  apiQuota        Int      @default(100)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  pages           Page[]
+
+  @@map("user")
+}
+
+model Page {
+  id                String   @id @default(cuid())
+  handle            String   @unique
+  mainKeyword       String
+  category          String   @default("general")
+  parentPageId      String?
+  metaTitle         String?
+  metaDescription   String?
+  content           String?  @db.LongText
+  faqContent        String?  @db.LongText
+  faqSchema         Json?
+  tableOfContents   String?  @db.LongText
+  relatedArticles   Json?
+  canonicalUrl      String?
+  canonical         Boolean  @default(true)
+  openGraphImage    String?
+  heroImage1        String?  @db.LongText
+  status            String   @default("draft")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  publishedAt       DateTime?
+  userId            String?
+  user              User?    @relation(fields: [userId], references: [id])
+  keywords          PageKeyword[]
+  images            PageImage[]
+  mainPageLinks     InternalLink[] @relation("MainPage")
+  relatedPageLinks  InternalLink[] @relation("RelatedPage")
+  
+  @@index([handle])
+  @@index([status])
+  @@index([userId])
+  @@index([category])
+  @@map("page")
+}
+
+model PageKeyword {
+  id          String   @id @default(cuid())
+  pageId      String
+  keyword     String
+  volume      Int?
+  category    String?
+  selected    Boolean  @default(true)
+  headingType String   @default("h2")
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  page        Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  
+  @@index([pageId])
+  @@index([keyword])
+  @@map("page_keyword")
+}
+
+model PageImage {
+  id           String   @id @default(cuid())
+  pageId       String
+  originalName String
+  fileName     String
+  filePath     String   @db.LongText
+  altText      String
+  fileSize     Int
+  mimeType     String
+  width        Int?
+  height       Int?
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  page         Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  
+  @@index([pageId])
+  @@map("page_image")
+}
+
+model InternalLink {
+  id            String   @id @default(cuid())
+  mainPageId    String
+  relatedPageId String
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  mainPage      Page     @relation("MainPage", fields: [mainPageId], references: [id], onDelete: Cascade)
+  relatedPage   Page     @relation("RelatedPage", fields: [relatedPageId], references: [id], onDelete: Cascade)
+  
+  @@unique([mainPageId, relatedPageId])
+  @@index([mainPageId])
+  @@index([relatedPageId])
+  @@map("internal_link")
+}
+
+model ParentPage {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([name])
+  @@map("parent_page")
+}
