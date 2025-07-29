@@ -13,36 +13,27 @@ export async function generateContentWithAssistant(
 ) {
   try {
     // Build assistant-style prompt
-    const prompt = `You are a content writer for SEO-focused websites. Your job is to generate high-quality, detailed content based on user instructions.
-
-IMPORTANT RULES:
-1. Always follow the user's custom instructions exactly
-2. Generate detailed, specific content - not generic placeholders
-3. Format content in the exact HTML structure provided
-4. Write comprehensive content for each H2 keyword
-5. Focus on being helpful and informative
-6. Use natural, engaging language
-7. Include specific details, examples, and actionable information
+    const prompt = `You are a content writer. Generate detailed content for each H2 keyword.
 
 MAIN TOPIC: ${mainTopic}
-CONTENT TYPE: ${contentType}
 H2 KEYWORDS: ${h2Keywords.join(', ')}
 
 CUSTOM INSTRUCTIONS:
 ${customInstructions.map((instruction, index) => `${index + 1}. ${instruction}`).join('\n')}
 
-HTML FORMAT:
+Generate detailed content for each H2 keyword. Format the response as HTML with this exact structure:
+
 <div class="row mb-4">
   <div class="col-lg-4 mb-4">
     <!-- Image will be added by user later -->
   </div>
   <div class="col-lg-8 mb-4">
-    <h2 class="h2-body-content">{h2Keyword}</h2>
-    <p class="p-body-content">{detailed content}</p>
+    <h2 class="h2-body-content">[H2 KEYWORD]</h2>
+    <p class="p-body-content">[DETAILED CONTENT FOLLOWING CUSTOM INSTRUCTIONS]</p>
   </div>
 </div>
 
-Generate detailed content for each H2 keyword following the custom instructions exactly. Provide the complete HTML structure with specific, helpful content.`
+Focus on the main topic: ${mainTopic}. Follow the custom instructions exactly. Write specific, helpful content - not generic placeholders.`
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4-turbo-preview",
@@ -53,7 +44,7 @@ Generate detailed content for each H2 keyword following the custom instructions 
         }
       ],
       max_tokens: 8000,
-      temperature: 0.8
+      temperature: 0.7
     })
 
     const content = completion.choices[0]?.message?.content || ''
