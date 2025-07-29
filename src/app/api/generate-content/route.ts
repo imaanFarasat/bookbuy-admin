@@ -80,17 +80,13 @@ async function handler(request: NextRequest, validatedData: any): Promise<NextRe
     // ⚠️ CRITICAL: Only provide structure to AI - let AI decide content
     try {
       // Build prompt with individual custom prompts for each keyword
-      let promptContent = `Create detailed content for these H2 keywords: ${allKeywords.join(', ')}. 
-
-H2 positions: ${keywords.map((keyword: any, index: number) => `${index + 1}st: ${keyword.keyword}`).join(', ')}
-
-${keywords.filter((k: any) => k.customPrompt).map((keyword: any, index: number) => 
+      let promptContent = `${keywords.filter((k: any) => k.customPrompt).map((keyword: any, index: number) => 
   `🚨 SPECIFIC INSTRUCTION FOR "${keyword.keyword}" (${index + 1}st H2): ${keyword.customPrompt}`
 ).join('\n\n')}
 
-IMPORTANT: You MUST follow the specific instructions above for each H2. Do NOT generate generic content.
+Create content for these H2 keywords: ${allKeywords.join(', ')}. 
 
-Write comprehensive, detailed content for each H2. Use this structure but replace the placeholder with actual content:
+Use this structure:
 
 ${keywords.map((keyword: any) => {
   const capitalizedKeyword = keyword.keyword.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')
@@ -110,7 +106,7 @@ ${keywords.map((keyword: any) => {
       if (hasIndividualPrompts) {
         promptContent += `
 
-🚨 CRITICAL: You MUST follow the specific instructions for each H2. Do NOT generate generic content - follow the exact instructions provided for each keyword.`
+Follow the specific instructions exactly.`
       }
 
       // Log individual prompts
