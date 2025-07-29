@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { generateContentWithAssistant } from '@/lib/openai'
+import { generateContentWithFunctionCalling } from '@/lib/openai'
 import { withSecureContentValidation } from '@/lib/security-wrapper'
 import { z } from 'zod'
 
@@ -28,8 +28,8 @@ async function handler(request: NextRequest, validatedData: any): Promise<NextRe
       }, { status: 500 })
     }
 
-    // Generate content using assistant-style approach
-    const result = await generateContentWithAssistant(
+    // Generate content using function calling approach
+    const result = await generateContentWithFunctionCalling(
       mainTopic,
       h2Keywords,
       customInstructions,

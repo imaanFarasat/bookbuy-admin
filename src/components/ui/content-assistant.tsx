@@ -74,6 +74,11 @@ export default function ContentAssistant({
         setGeneratedContent(data.content)
         onContentGenerated?.(data.content)
         setActiveTab('content')
+        
+        // Show function calls info if any were made
+        if (data.functionCalls && data.functionCalls > 0) {
+          console.log(`✅ Used ${data.functionCalls} function calls to get real data`)
+        }
       } else {
         alert(`Error: ${data.error}`)
       }
