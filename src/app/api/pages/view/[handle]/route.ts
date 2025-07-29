@@ -125,6 +125,63 @@ export async function GET(
         .hero-image-link:hover .image-overlay {
             opacity: 0.8;
         }
+        
+        /* Standard page spacing */
+        .tm-main {
+            padding: 20px 0;
+        }
+        
+        .tm-text-container {
+            padding: 0 15px;
+            margin-bottom: 30px;
+        }
+        
+        .hero-container {
+            margin-bottom: 40px;
+        }
+        
+        .content-section {
+            margin: 30px 0;
+            padding: 20px 0;
+        }
+        
+        .banner-ad-container {
+            margin: 30px 0;
+        }
+        
+        .image-section {
+            margin: 30px 0;
+        }
+        
+        .tm-copyright {
+            margin-top: 50px;
+            padding: 30px 0;
+        }
+        
+        /* Responsive spacing */
+        @media (max-width: 768px) {
+            .tm-main {
+                padding: 15px 0;
+            }
+            
+            .tm-text-container {
+                padding: 0 10px;
+                margin-bottom: 20px;
+            }
+            
+            .hero-container {
+                margin-bottom: 30px;
+            }
+            
+            .content-section {
+                margin: 20px 0;
+                padding: 15px 0;
+            }
+            
+            .banner-ad-container {
+                margin: 20px 0;
+            }
+        }
     </style>
 </head>
 <body>
