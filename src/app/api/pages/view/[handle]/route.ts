@@ -18,8 +18,31 @@ export async function GET(
       return NextResponse.json({ error: 'Page not found' }, { status: 404 })
     }
 
+    // Debug page data
+    console.log('🔍 DEBUG: Page Data Analysis')
+    console.log('🔍 Page ID:', page.id)
+    console.log('🔍 Page Handle:', page.handle)
+    console.log('🔍 Main Keyword:', page.mainKeyword)
+    console.log('🔍 Content Length:', page.content?.length || 0)
+    console.log('🔍 Content Preview:', page.content?.substring(0, 200) + '...')
+    
+    // Check for image placeholders in content
+    const imagePlaceholderCount = (page.content?.match(/<!-- Image will be added by user later -->/g) || []).length
+    const imgTagCount = (page.content?.match(/<img/g) || []).length
+    console.log('🔍 Image Placeholders in content:', imagePlaceholderCount)
+    console.log('🔍 IMG tags in content:', imgTagCount)
+    
+    // Check for specific content sections
+    const h2Sections = page.content?.match(/<h2[^>]*>.*?<\/h2>/g) || []
+    console.log('🔍 H2 sections found:', h2Sections.length)
+    console.log('🔍 H2 sections:', h2Sections.map(h2 => h2.replace(/<[^>]*>/g, '').trim()))
+    console.log('🔍 Hero Section:', (page as any).heroSection)
+    console.log('🔍 Banner Ads:', (page as any).bannerAds)
+    console.log('🔍 Images Count:', page.images?.length || 0)
+    console.log('🔍 Images:', page.images?.map(img => ({ filePath: img.filePath, altText: img.altText })))
+    
     // Debug hero section data
-    console.log('Hero section data:', {
+    console.log('🔍 Hero section data:', {
       heroSection: (page as any).heroSection,
       buttonUrl: (page as any).heroSection?.buttonUrl,
       buttonText: (page as any).heroSection?.buttonText,
@@ -137,6 +160,17 @@ export async function GET(
                                 
                                 <!-- Main Content -->
                                 <div class="content-section">
+                                    <!-- DEBUG INFO -->
+                                    <div style="background: #f0f0f0; border: 2px solid #333; padding: 10px; margin: 10px 0; font-family: monospace; font-size: 12px;">
+                                        <strong>DEBUG INFO:</strong><br>
+                                        Content Length: ${page.content?.length || 0}<br>
+                                        Image Placeholders: ${(page.content?.match(/<!-- Image will be added by user later -->/g) || []).length}<br>
+                                        IMG tags: ${(page.content?.match(/<img/g) || []).length}<br>
+                                        H2 sections: ${(page.content?.match(/<h2[^>]*>.*?<\/h2>/g) || []).length}<br>
+                                        Images in DB: ${page.images?.length || 0}<br>
+                                        Hero Section: ${(page as any).heroSection ? 'Present' : 'Missing'}<br>
+                                        Banner Ads: ${(page as any).bannerAds?.length || 0}
+                                    </div>
                                     ${page.content || ''}
                                 </div>
                                 

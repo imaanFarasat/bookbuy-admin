@@ -2155,8 +2155,11 @@ export default function Dashboard() {
         }
         
         // Replace each content section with our AI-generated content
-        console.log('Debug: bodyContentImages length:', bodyContentImages.length)
-        console.log('Debug: bodyContentImages:', bodyContentImages)
+        console.log('🔍 DEBUG: Main Content Images Analysis')
+        console.log('🔍 bodyContentImages length:', bodyContentImages.length)
+        console.log('🔍 bodyContentImages array:', bodyContentImages)
+        console.log('🔍 mainContentWithAI length:', mainContentWithAI.length)
+        console.log('🔍 mainContentWithAI:', mainContentWithAI.map(section => ({ keyword: section.keyword, contentLength: section.content.length })))
         
         for (let i = 0; i < mainContentWithAI.length; i++) {
           const contentSection = mainContentWithAI[i]
@@ -2166,7 +2169,11 @@ export default function Dashboard() {
               if (content) {
             const bodyImageIndex = bodyContentImages.length > 0 ? i % bodyContentImages.length : -1
             const bodyImage = bodyImageIndex >= 0 ? bodyContentImages[bodyImageIndex] : null
-            console.log(`Debug: Section ${i}, bodyImageIndex: ${bodyImageIndex}, bodyImage:`, bodyImage)
+            console.log(`🔍 Section ${i}: "${contentSection.keyword}"`)
+            console.log(`🔍   bodyImageIndex: ${bodyImageIndex}`)
+            console.log(`🔍   bodyImage:`, bodyImage)
+            console.log(`🔍   bodyImage?.url:`, bodyImage?.url)
+            console.log(`🔍   bodyImage?.alt:`, bodyImage?.alt)
             
             const isEven = i % 2 === 0
                 
