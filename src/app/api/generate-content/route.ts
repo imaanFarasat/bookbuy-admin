@@ -111,7 +111,7 @@ ${keywords.map((keyword: any) => {
             content: promptContent
           }
         ],
-        max_tokens: 4000,
+        max_tokens: 6000,
         temperature: 0.8
       })
 
