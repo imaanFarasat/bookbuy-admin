@@ -86,7 +86,7 @@ export default async function DynamicPage({ params }: PageProps) {
                                                     <a href="${(page as any).heroSection.buttonUrl}" class="book-button">
                                                         ${(page as any).heroSection.buttonText}
                                                     </a>
-                                                    ` : '<!-- No button data: buttonUrl=' + ((page as any).heroSection?.buttonUrl || 'null') + ', buttonText=' + ((page as any).heroSection?.buttonText || 'null') + ' -->'}
+                                                    ` : ''}
                                                 </div>
                                             </div>
                                             
@@ -145,7 +145,14 @@ export default async function DynamicPage({ params }: PageProps) {
                                     ${page.content || ''}
                                 </div>
                                 
-                                <!-- FAQ content is already embedded in the main content -->
+                                <!-- FAQ Section -->
+                                ${page.faqContent ? `
+                                <div class="faq-section">
+                                    <h2 class="h2-faq-title">Frequently Asked Questions</h2>
+                                    <hr class="mb-5">
+                                    ${page.faqContent}
+                                </div>
+                                ` : ''}
                                 
                                 <!-- Related Images -->
                                 ${page.images && page.images.length > 2 ? `
@@ -172,7 +179,7 @@ export default async function DynamicPage({ params }: PageProps) {
     <!-- Footer -->
     <footer class="tm-copyright">
         <div class="container">
-            <p>&copy; 2025 BookBuy. All rights reserved.</p>
+            <p>&copy; 2024 ${page.mainKeyword}. All rights reserved.</p>
         </div>
     </footer>
     
