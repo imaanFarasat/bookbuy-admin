@@ -1859,6 +1859,8 @@ export default function Dashboard() {
 
       console.log('Dashboard data for template injection:', {
         mainKeyword: dashboardData.mainKeyword,
+        bodyContentImagesLength: dashboardData.bodyContentImages?.length || 0,
+        bodyContentImages: dashboardData.bodyContentImages,
         heroSection: {
           enabled: dashboardData.heroSection.enabled,
           h1: dashboardData.heroSection.h1,
@@ -2153,14 +2155,18 @@ export default function Dashboard() {
         }
         
         // Replace each content section with our AI-generated content
+        console.log('Debug: bodyContentImages length:', bodyContentImages.length)
+        console.log('Debug: bodyContentImages:', bodyContentImages)
+        
         for (let i = 0; i < mainContentWithAI.length; i++) {
           const contentSection = mainContentWithAI[i]
           const heading = `<h2 class="h4 mb-3 text-primary">${contentSection.keyword}</h2>`
           const content = contentSection.content
               
               if (content) {
-            const bodyImageIndex = i % bodyContentImages.length
-            const bodyImage = bodyContentImages[bodyImageIndex]
+            const bodyImageIndex = bodyContentImages.length > 0 ? i % bodyContentImages.length : -1
+            const bodyImage = bodyImageIndex >= 0 ? bodyContentImages[bodyImageIndex] : null
+            console.log(`Debug: Section ${i}, bodyImageIndex: ${bodyImageIndex}, bodyImage:`, bodyImage)
             
             const isEven = i % 2 === 0
                 
