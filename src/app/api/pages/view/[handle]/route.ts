@@ -67,7 +67,9 @@ export async function GET(
       buttonUrl: (page as any).heroSection?.buttonUrl,
       buttonText: (page as any).heroSection?.buttonText,
       hasButtonUrl: !!(page as any).heroSection?.buttonUrl,
-      hasButtonText: !!(page as any).heroSection?.buttonText
+      hasButtonText: !!(page as any).heroSection?.buttonText,
+      buttonTextType: typeof (page as any).heroSection?.buttonText,
+      buttonTextLength: (page as any).heroSection?.buttonText?.length
     })
 
     // Generate the HTML template

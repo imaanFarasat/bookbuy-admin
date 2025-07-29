@@ -2501,7 +2501,18 @@ export default function Dashboard() {
             contentLength: pageData.content?.length || 0,
             faqContentLength: pageData.faqContent?.length || 0,
             faqSchemaType: typeof pageData.faqSchema,
-            keywordsCount: pageData.keywords?.length || 0
+            keywordsCount: pageData.keywords?.length || 0,
+            heroSection: {
+              h1: heroH1,
+              slogan: heroSlogan,
+              span: heroSpan,
+              buttonUrl: heroButtonUrl,
+              buttonText: heroButtonText,
+              image1: heroImage1,
+              image2: heroImage2,
+              alt1: heroAlt1,
+              alt2: heroAlt2
+            }
           })
           
           const saveResponse = await fetch('/api/pages', {

@@ -60,7 +60,10 @@ export async function POST(request: NextRequest) {
       contentLength: body.content?.length || 0,
       faqLength: body.faq?.length || 0,
       schemaLength: body.schema?.length || 0,
-      keywordsCount: body.keywords?.length || 0
+      keywordsCount: body.keywords?.length || 0,
+      heroSection: body.heroSection,
+      buttonText: body.heroSection?.buttonText,
+      buttonTextType: typeof body.heroSection?.buttonText
     })
     
     const validatedData = savePageSchema.parse(body)
