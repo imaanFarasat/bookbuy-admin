@@ -785,8 +785,8 @@ hr { border-top: 4px solid #CCC; }
 }
 
 .tm-section-wrap {
-	width: calc(100% - 750px);
-	margin-left: 750px;
+	width: 100%;
+	margin-left: 0;
 	margin-right: 0;
 	position: relative;
 }
@@ -1334,8 +1334,8 @@ figure.effect-honey:hover ul li a {
 
 @media (max-width: 1400px) {
 	.tm-section-wrap {
-		width: calc(100% - 630px);
-		margin-left: 630px;
+		width: 100%;
+		margin-left: 0;
 	}
 }
 
@@ -1388,8 +1388,8 @@ figure.effect-honey:hover ul li a {
 	}
 
 	.tm-section-wrap {
-		width: calc(100% - 280px);
-		margin-left: 280px;		
+		width: 100%;
+		margin-left: 0;		
 	}
 
 	.tm-section {
