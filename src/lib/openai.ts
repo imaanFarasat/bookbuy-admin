@@ -4,6 +4,189 @@ export const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
+// Content generation with assistant-style prompts
+export async function generateContentWithAssistant(
+  mainTopic: string,
+  h2Keywords: string[],
+  customInstructions: string[],
+  contentType: string = 'comprehensive guide'
+) {
+  try {
+    // Build assistant-style prompt
+    const prompt = `You are a content writer for SEO-focused websites. Your job is to generate high-quality, detailed content based on user instructions.
+
+IMPORTANT RULES:
+1. Always follow the user's custom instructions exactly
+2. Generate detailed, specific content - not generic placeholders
+3. Format content in the exact HTML structure provided
+4. Write comprehensive content for each H2 keyword
+5. Focus on being helpful and informative
+6. Use natural, engaging language
+7. Include specific details, examples, and actionable information
+
+MAIN TOPIC: ${mainTopic}
+CONTENT TYPE: ${contentType}
+H2 KEYWORDS: ${h2Keywords.join(', ')}
+
+CUSTOM INSTRUCTIONS:
+${customInstructions.map((instruction, index) => `${index + 1}. ${instruction}`).join('\n')}
+
+HTML FORMAT:
+<div class="row mb-4">
+  <div class="col-lg-4 mb-4">
+    <!-- Image will be added by user later -->
+  </div>
+  <div class="col-lg-8 mb-4">
+    <h2 class="h2-body-content">{h2Keyword}</h2>
+    <p class="p-body-content">{detailed content}</p>
+  </div>
+</div>
+
+Generate detailed content for each H2 keyword following the custom instructions exactly. Provide the complete HTML structure with specific, helpful content.`
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4-turbo-preview",
+      messages: [
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      max_tokens: 8000,
+      temperature: 0.8
+    })
+
+    const content = completion.choices[0]?.message?.content || ''
+    
+    return {
+      success: true,
+      content: content,
+      model: "gpt-4-turbo-preview"
+    }
+  } catch (error) {
+    console.error('❌ Error generating content with assistant:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    }
+  }
+}
+
+// Generate FAQ from content
+export async function generateFAQFromContent(
+  content: string,
+  mainKeyword: string,
+  questionCount: number = 20
+) {
+  try {
+    const prompt = `You are an expert content writer. Generate ${questionCount} FAQ questions and answers based on the provided content.
+
+MAIN KEYWORD: ${mainKeyword}
+CONTENT: ${content}
+
+Generate ${questionCount} relevant FAQ questions and answers. Format the response as HTML with the following structure:
+
+<div class="faq-section">
+  <h2 class="h2-faq mb-4">Frequently Asked Questions</h2>
+  <div class="faq-content">
+    <h3>[Question 1]</h3>
+    <p>[Answer 1]</p>
+    
+    <h3>[Question 2]</h3>
+    <p>[Answer 2]</p>
+    
+    ... (continue for all ${questionCount} questions)
+  </div>
+</div>
+
+Focus on the main keyword: ${mainKeyword}. Make questions and answers specific, helpful, and relevant to the content.`
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4-turbo-preview",
+      messages: [
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      max_tokens: 6000,
+      temperature: 0.7
+    })
+
+    const faqContent = completion.choices[0]?.message?.content || ''
+    
+    return {
+      success: true,
+      faqContent: faqContent,
+      model: "gpt-4-turbo-preview"
+    }
+  } catch (error) {
+    console.error('❌ Error generating FAQ:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    }
+  }
+}
+
+// Generate FAQ schema
+export async function generateFAQSchema(
+  faqContent: string,
+  mainKeyword: string
+) {
+  try {
+    const prompt = `Generate JSON-LD schema markup for FAQ content.
+
+MAIN KEYWORD: ${mainKeyword}
+FAQ CONTENT: ${faqContent}
+
+Extract questions and answers from the FAQ content and create a JSON-LD schema following this structure:
+
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "[Question text]",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "[Answer text]"
+      }
+    }
+  ]
+}
+
+Generate the complete JSON-LD schema with all questions and answers from the FAQ content.`
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4-turbo-preview",
+      messages: [
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      max_tokens: 4000,
+      temperature: 0.7
+    })
+
+    const schemaContent = completion.choices[0]?.message?.content || ''
+    
+    return {
+      success: true,
+      schema: schemaContent,
+      model: "gpt-4-turbo-preview"
+    }
+  } catch (error) {
+    console.error('❌ Error generating FAQ schema:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    }
+  }
+}
+
 export async function generatePageContent(keyword: string, handle: string, h2Headings?: string[], h3Headings?: string[]) {
   const customHeadings = h2Headings && h3Headings ? `
   Use these specific headings:
