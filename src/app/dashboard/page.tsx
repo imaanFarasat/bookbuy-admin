@@ -423,7 +423,8 @@ export default function Dashboard() {
     console.log('🔍 heroButtonText changed:', {
       value: heroButtonText,
       type: typeof heroButtonText,
-      length: heroButtonText?.length
+      length: heroButtonText?.length,
+      stack: new Error().stack?.split('\n').slice(1, 4).join('\n')
     })
   }, [heroButtonText])
   const [heroImage1, setHeroImage1] = useState('')
@@ -2530,6 +2531,22 @@ export default function Dashboard() {
               isNull: heroButtonText === null,
               isUndefined: heroButtonText === undefined
             }
+          })
+          
+          // Log the actual data being sent
+          console.log('🔍 ACTUAL DATA BEING SENT:', JSON.stringify({
+            buttonText: heroButtonText,
+            buttonUrl: heroButtonUrl,
+            heroSection: pageData.heroSection
+          }, null, 2))
+          
+          // Check if buttonText is being reset
+          console.log('🔍 FINAL CHECK - heroButtonText before sending:', {
+            value: heroButtonText,
+            type: typeof heroButtonText,
+            length: heroButtonText?.length,
+            isEmpty: heroButtonText === '',
+            isDefault: heroButtonText === 'Book Now'
           })
           
           const saveResponse = await fetch('/api/pages', {
