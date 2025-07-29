@@ -417,6 +417,15 @@ export default function Dashboard() {
   const [heroSpan, setHeroSpan] = useState('')
   const [heroButtonUrl, setHeroButtonUrl] = useState('')
   const [heroButtonText, setHeroButtonText] = useState('Book Now')
+  
+  // Debug heroButtonText changes
+  React.useEffect(() => {
+    console.log('🔍 heroButtonText changed:', {
+      value: heroButtonText,
+      type: typeof heroButtonText,
+      length: heroButtonText?.length
+    })
+  }, [heroButtonText])
   const [heroImage1, setHeroImage1] = useState('')
   const [heroImage2, setHeroImage2] = useState('')
   const [heroAlt1, setHeroAlt1] = useState('')
@@ -2512,6 +2521,14 @@ export default function Dashboard() {
               image2: heroImage2,
               alt1: heroAlt1,
               alt2: heroAlt2
+            },
+            debugHeroButtonText: {
+              value: heroButtonText,
+              type: typeof heroButtonText,
+              length: heroButtonText?.length,
+              isEmpty: heroButtonText === '',
+              isNull: heroButtonText === null,
+              isUndefined: heroButtonText === undefined
             }
           })
           
