@@ -18,6 +18,15 @@ export async function GET(
       return NextResponse.json({ error: 'Page not found' }, { status: 404 })
     }
 
+    // Debug hero section data
+    console.log('Hero section data:', {
+      heroSection: (page as any).heroSection,
+      buttonUrl: (page as any).heroSection?.buttonUrl,
+      buttonText: (page as any).heroSection?.buttonText,
+      hasButtonUrl: !!(page as any).heroSection?.buttonUrl,
+      hasButtonText: !!(page as any).heroSection?.buttonText
+    })
+
     // Generate the HTML template
     const templateHtml = `
 <!DOCTYPE html>
@@ -68,7 +77,11 @@ export async function GET(
                                                     <a href="${(page as any).heroSection.buttonUrl}" class="book-button">
                                                         ${(page as any).heroSection.buttonText}
                                                     </a>
-                                                    ` : '<!-- No button data: buttonUrl=' + ((page as any).heroSection?.buttonUrl || 'null') + ', buttonText=' + ((page as any).heroSection?.buttonText || 'null') + ' -->'}
+                                                    ` : `<div style="background: red; color: white; padding: 10px; margin: 10px 0; border-radius: 5px;">
+                                                        DEBUG: No button data<br>
+                                                        buttonUrl: ${(page as any).heroSection?.buttonUrl || 'null'}<br>
+                                                        buttonText: ${(page as any).heroSection?.buttonText || 'null'}
+                                                    </div>`}
                                                 </div>
                                             </div>
                                             

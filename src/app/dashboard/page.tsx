@@ -2468,7 +2468,7 @@ export default function Dashboard() {
         }
 
         // Page saved successfully - show success message with URL (using API route)
-        const pageUrl = `https://bookbuy-admin-production.up.railway.app/api/pages/${pageData.handle}`
+        const pageUrl = `https://bookbuy-admin-production.up.railway.app/api/pages/view/${pageData.handle}`
         setMessage(`✅ Page generated and saved successfully! View your page at: ${pageUrl}`)
         setIsGeneratingImages(false)
         
