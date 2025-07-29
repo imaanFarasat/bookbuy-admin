@@ -76,13 +76,15 @@ ${keywords.map((keyword: any) => {
 
       // Add custom prompt if provided
       if (customPrompt && customPrompt.trim()) {
-        promptContent = `Create detailed content for these H2 keywords: ${allKeywords.join(', ')}. 
+        promptContent = `🚨 CRITICAL INSTRUCTION: ${customPrompt}
+
+Create detailed content for these H2 keywords: ${allKeywords.join(', ')}. 
 
 H2 positions: ${keywords.map((keyword: any, index: number) => `${index + 1}st: ${keyword.keyword}`).join(', ')}
 
-IMPORTANT USER REQUEST: ${customPrompt}
+You MUST follow the critical instruction above. Generate actual content, not placeholders.
 
-Write comprehensive, detailed content for each H2. Use this structure but replace the placeholder with actual content:
+Use this structure and write real content:
 
 ${keywords.map((keyword: any) => {
   const capitalizedKeyword = keyword.keyword.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')
@@ -92,16 +94,19 @@ ${keywords.map((keyword: any) => {
   </div>
   <div class="col-lg-8 mb-4">
       <h2 class="h2-body-content">${capitalizedKeyword}</h2>
-      <p class="p-body-content">[REPLACE THIS WITH ACTUAL CONTENT about ${keyword.keyword}]</p>
+      <p class="p-body-content">[WRITE REAL CONTENT HERE - NOT A PLACEHOLDER]</p>
   </div>
 </div>`
 }).join('\n\n')}`
         console.log('🔍 DEBUG: Custom prompt added:', customPrompt)
+        console.log('🔍 DEBUG: Full prompt with custom instruction:', promptContent)
       }
 
       console.log('🔍 DEBUG: Keywords being processed:', allKeywords)
       console.log('🔍 DEBUG: Number of keywords:', allKeywords.length)
+      console.log('🔍 DEBUG: Custom prompt provided:', customPrompt)
       console.log('🔍 DEBUG: OpenAI prompt =', promptContent)
+      console.log('🔍 DEBUG: OpenAI API key configured:', !!process.env.OPENAI_API_KEY)
       
       const completion = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
@@ -123,11 +128,35 @@ ${keywords.map((keyword: any) => {
           content: aiContent.trim(),
           success: true 
         })
+      } else {
+        console.error('No content generated from OpenAI')
+        return NextResponse.json(
+          { error: 'No content was generated. Please try again.' }, 
+          { status: 500 }
+        )
       }
-    } catch (openaiError) {
+    } catch (openaiError: any) {
       console.error('OpenAI API error:', openaiError)
+      console.error('Error details:', openaiError.message)
+      
+      // Check if it's an API key issue
+      if (openaiError.message?.includes('401') || openaiError.message?.includes('authentication')) {
+        return NextResponse.json(
+          { error: 'OpenAI API key is invalid or missing. Please check your configuration.' }, 
+          { status: 500 }
+        )
+      }
+      
+      // Check if it's a rate limit issue
+      if (openaiError.message?.includes('rate limit') || openaiError.message?.includes('429')) {
+        return NextResponse.json(
+          { error: 'OpenAI rate limit exceeded. Please try again in a few minutes.' }, 
+          { status: 500 }
+        )
+      }
+      
       return NextResponse.json(
-        { error: 'Failed to generate content with AI. Please check your OpenAI API key and try again.' }, 
+        { error: `Failed to generate content with AI: ${openaiError.message || 'Unknown error'}` }, 
         { status: 500 }
       )
     }
