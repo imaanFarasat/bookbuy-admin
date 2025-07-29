@@ -78,6 +78,7 @@ interface SavedPage {
     slogan: string;
     span: string;
     buttonUrl: string;
+    buttonText: string;
     image1: string;
     image2: string;
     alt1: string;
@@ -200,6 +201,7 @@ export default function EditPage() {
   const [heroSlogan, setHeroSlogan] = useState('')
   const [heroSpan, setHeroSpan] = useState('')
   const [heroButtonUrl, setHeroButtonUrl] = useState('')
+  const [heroButtonText, setHeroButtonText] = useState('')
   const [heroImage1, setHeroImage1] = useState('')
   const [heroImage2, setHeroImage2] = useState('')
   const [heroAlt1, setHeroAlt1] = useState('')
@@ -288,6 +290,7 @@ export default function EditPage() {
           setHeroSlogan(page.heroSection.slogan || '')
           setHeroSpan(page.heroSection.span || '')
           setHeroButtonUrl(page.heroSection.buttonUrl || '')
+          setHeroButtonText(page.heroSection.buttonText || '')
           setHeroImage1(page.heroSection.image1 || '')
           setHeroImage2(page.heroSection.image2 || '')
           setHeroAlt1(page.heroSection.alt1 || '')
@@ -535,6 +538,7 @@ export default function EditPage() {
           slogan: heroSlogan,
           span: heroSpan,
           buttonUrl: heroButtonUrl,
+          buttonText: heroButtonText,
           image1: heroImage1,
           image2: heroImage2,
           alt1: heroAlt1,
@@ -931,6 +935,8 @@ export default function EditPage() {
             heroAlt1={heroAlt1}
             heroAlt2={heroAlt2}
             buttonUrl={heroButtonUrl}
+            buttonText={heroButtonText}
+            isEnabled={true}
             onH1Change={setHeroH1}
             onSloganChange={setHeroSlogan}
             onSpanChange={setHeroSpan}
@@ -939,6 +945,8 @@ export default function EditPage() {
             onAlt1Change={setHeroAlt1}
             onAlt2Change={setHeroAlt2}
             onButtonUrlChange={setHeroButtonUrl}
+            onButtonTextChange={setHeroButtonText}
+            onToggleEnabled={() => {}}
             onGenerateSlogan={() => {
               // TODO: Implement slogan generation
               console.log('Generate slogan clicked')

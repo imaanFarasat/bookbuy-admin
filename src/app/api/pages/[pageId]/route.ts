@@ -41,6 +41,7 @@ const updatePageSchema = z.object({
     slogan: z.string(),
     span: z.string(),
     buttonUrl: z.string(),
+    buttonText: z.string().optional(),
     image1: z.string().optional(),
     image2: z.string().optional(),
     alt1: z.string().optional(),
@@ -88,7 +89,18 @@ export async function PUT(
         content: validatedData.content,
         faqContent: validatedData.faqContent,
         faqSchema: validatedData.faqSchema,
-        heroImage1: validatedData.heroSection?.image1 || null,
+        heroSection: validatedData.heroSection ? {
+          h1: validatedData.heroSection.h1,
+          slogan: validatedData.heroSection.slogan,
+          span: validatedData.heroSection.span,
+          buttonUrl: validatedData.heroSection.buttonUrl,
+          buttonText: validatedData.heroSection.buttonText,
+          image1: validatedData.heroSection.image1,
+          image2: validatedData.heroSection.image2,
+          alt1: validatedData.heroSection.alt1,
+          alt2: validatedData.heroSection.alt2,
+        } : null,
+        bannerAds: validatedData.bannerAds || null,
         updatedAt: new Date(),
         // Update keywords
         keywords: {
