@@ -55,9 +55,11 @@ async function handler(request: NextRequest, validatedData: any): Promise<NextRe
     // Try to use OpenAI API
     // ⚠️ CRITICAL: Only provide structure to AI - let AI decide content
     try {
-      let promptContent = `Write content for these H2 keywords: ${allKeywords.join(', ')}. 
+      let promptContent = `Create content for these H2 keywords: ${allKeywords.join(', ')}. 
 
-Each H2 should have unique content. Use this structure:
+H2 positions: ${keywords.map((keyword: any, index: number) => `${index + 1}st: ${keyword.keyword}`).join(', ')}
+
+Write unique content for each H2. Use this basic structure but be creative with the content:
 
 ${keywords.map((keyword: any) => {
   const capitalizedKeyword = keyword.keyword.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')
@@ -67,20 +69,20 @@ ${keywords.map((keyword: any) => {
   </div>
   <div class="col-lg-8 mb-4">
       <h2 class="h2-body-content">${capitalizedKeyword}</h2>
-      <p class="p-body-content">[Write content about ${keyword.keyword}]</p>
+      <p class="p-body-content">[Be creative with content about ${keyword.keyword}]</p>
   </div>
 </div>`
-}).join('\n\n')}
-
-H2 positions: ${keywords.map((keyword: any, index: number) => `${index + 1}st: ${keyword.keyword}`).join(', ')}`
+}).join('\n\n')}`
 
       // Add custom prompt if provided
       if (customPrompt && customPrompt.trim()) {
-        promptContent = `Write content for these H2 keywords: ${allKeywords.join(', ')}. 
+        promptContent = `Create content for these H2 keywords: ${allKeywords.join(', ')}. 
 
-IMPORTANT: You MUST follow these specific instructions: ${customPrompt}
+H2 positions: ${keywords.map((keyword: any, index: number) => `${index + 1}st: ${keyword.keyword}`).join(', ')}
 
-Each H2 should have unique content. Use this structure:
+User request: ${customPrompt}
+
+Write unique content for each H2. Use this basic structure but be creative with the content:
 
 ${keywords.map((keyword: any) => {
   const capitalizedKeyword = keyword.keyword.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')
@@ -90,12 +92,10 @@ ${keywords.map((keyword: any) => {
   </div>
   <div class="col-lg-8 mb-4">
       <h2 class="h2-body-content">${capitalizedKeyword}</h2>
-      <p class="p-body-content">[Write content about ${keyword.keyword}]</p>
+      <p class="p-body-content">[Be creative with content about ${keyword.keyword}]</p>
   </div>
 </div>`
-}).join('\n\n')}
-
-H2 positions: ${keywords.map((keyword: any, index: number) => `${index + 1}st: ${keyword.keyword}`).join(', ')}`
+}).join('\n\n')}`
         console.log('🔍 DEBUG: Custom prompt added:', customPrompt)
       }
 
@@ -112,7 +112,7 @@ H2 positions: ${keywords.map((keyword: any, index: number) => `${index + 1}st: $
           }
         ],
         max_tokens: 3000,
-        temperature: 0.7
+        temperature: 0.8
       })
 
       const aiContent = completion.choices[0]?.message?.content || ''
