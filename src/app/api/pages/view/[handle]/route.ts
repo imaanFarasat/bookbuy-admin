@@ -260,22 +260,47 @@ export async function GET(
                                         
                                         // Insert banner ads at appropriate intervals
                                         if (bannerAds.length > 0) {
-                                            const contentSections = contentWithImages.split('</div>')
-                                            const sectionsWithBanners = []
+                                            // Split content by row divs to find good insertion points
+                                            const rowPattern = /<div class="row mb-4">/g
+                                            const matches = [...contentWithImages.matchAll(rowPattern)]
                                             
-                                            bannerAds.forEach((banner: any, bannerIndex: number) => {
-                                                // Insert banner after every 2 content sections (or at the end if not enough sections)
-                                                const insertPosition = Math.min((bannerIndex + 1) * 2, contentSections.length - 1)
+                                            if (matches.length > 0) {
+                                                let modifiedContent = contentWithImages
+                                                let offset = 0
                                                 
-                                                // Add content sections up to the insert position
-                                                for (let i = sectionsWithBanners.length; i < insertPosition; i++) {
-                                                    if (contentSections[i]) {
-                                                        sectionsWithBanners.push(contentSections[i] + '</div>')
+                                                bannerAds.forEach((banner: any, bannerIndex: number) => {
+                                                    // Insert banner after every 2 content rows
+                                                    const insertAfterRow = Math.min((bannerIndex + 1) * 2, matches.length)
+                                                    
+                                                    if (insertAfterRow < matches.length) {
+                                                        const match = matches[insertAfterRow - 1]
+                                                        const insertPosition = match.index! + match[0].length + offset
+                                                        
+                                                        const bannerHtml = `
+                                                        </div>
+                                                        <div class="banner-ad-container">
+                                                            <div class="banner-ad-content">
+                                                                <div class="banner-ad-image">
+                                                                    ${banner.image?.url ? `<img src="${banner.image.url}" alt="${banner.image.alt || 'Banner Ad'}" class="img-fluid">` : ''}
+                                                                </div>
+                                                                <div class="banner-ad-text">
+                                                                    <h3 class="banner-ad-title">${banner.title || 'Banner Ad'}</h3>
+                                                                    <p class="banner-ad-description">${banner.description || ''}</p>
+                                                                    ${banner.cta ? `<a href="#" class="banner-ad-btn">${banner.cta}</a>` : ''}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-4">`
+                                                        
+                                                        modifiedContent = modifiedContent.slice(0, insertPosition) + bannerHtml + modifiedContent.slice(insertPosition)
+                                                        offset += bannerHtml.length
                                                     }
-                                                }
+                                                })
                                                 
-                                                // Insert banner ad
-                                                const bannerHtml = `
+                                                contentWithImages = modifiedContent
+                                            } else {
+                                                // If no row divs found, just append banners at the end
+                                                const bannerHtml = bannerAds.map((banner: any) => `
                                                 <div class="banner-ad-container">
                                                     <div class="banner-ad-content">
                                                         <div class="banner-ad-image">
@@ -287,19 +312,10 @@ export async function GET(
                                                             ${banner.cta ? `<a href="#" class="banner-ad-btn">${banner.cta}</a>` : ''}
                                                         </div>
                                                     </div>
-                                                </div>`
+                                                </div>`).join('')
                                                 
-                                                sectionsWithBanners.push(bannerHtml)
-                                            })
-                                            
-                                            // Add remaining content sections
-                                            for (let i = sectionsWithBanners.length; i < contentSections.length; i++) {
-                                                if (contentSections[i]) {
-                                                    sectionsWithBanners.push(contentSections[i] + '</div>')
-                                                }
+                                                contentWithImages += bannerHtml
                                             }
-                                            
-                                            contentWithImages = sectionsWithBanners.join('')
                                         }
                                         
                                         return contentWithImages
