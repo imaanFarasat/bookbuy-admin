@@ -28,7 +28,7 @@ async function handler(request: NextRequest, validatedData: any): Promise<NextRe
 
     // Check if OpenAI API key is configured
     if (!process.env.OPENAI_API_KEY) {
-      console.log('OpenAI API key not configured, generating simple content')
+      console.log('🔍 DEBUG: FALLBACK TRIGGERED - OpenAI API key not configured')
       
       // Generate simple content without AI - just provide structure for all keywords
       // ⚠️ REMEMBER: No pre-written content - only structure and placeholders
@@ -60,7 +60,9 @@ async function handler(request: NextRequest, validatedData: any): Promise<NextRe
 
     // Check if OpenAI API key is missing or empty
     if (!process.env.OPENAI_API_KEY || !process.env.OPENAI_API_KEY.trim()) {
-      console.log('OpenAI API key is missing or empty, generating simple content')
+      console.log('🔍 DEBUG: FALLBACK TRIGGERED - OpenAI API key is missing or empty')
+      console.log('🔍 DEBUG: API Key exists:', !!process.env.OPENAI_API_KEY)
+      console.log('🔍 DEBUG: API Key length:', process.env.OPENAI_API_KEY?.length || 0)
       return NextResponse.json({ 
         content: `<div class="row mb-4">
           <div class="col-lg-4 mb-4">
@@ -111,6 +113,7 @@ Respond with only the paragraphs, one per line, in the same order as the keyword
       console.log('🔍 DEBUG: === FULL PROMPT BEING SENT TO OPENAI ===')
       console.log(promptContent)
       console.log('🔍 DEBUG: === END OF PROMPT ===')
+      console.log('🔍 DEBUG: About to call OpenAI API...')
       console.log('🔍 DEBUG: OpenAI API key configured:', !!process.env.OPENAI_API_KEY)
       console.log('🔍 DEBUG: OpenAI API key length:', process.env.OPENAI_API_KEY?.length || 0)
       console.log('🔍 DEBUG: OpenAI API key starts with sk-:', process.env.OPENAI_API_KEY?.startsWith('sk-') || false)
@@ -128,6 +131,8 @@ Respond with only the paragraphs, one per line, in the same order as the keyword
       })
 
       const aiContent = completion.choices[0]?.message?.content || ''
+      
+      console.log('🔍 DEBUG: OpenAI response received:', aiContent.substring(0, 500) + '...')
       
       if (aiContent) {
         console.log('Generated content with OpenAI:', aiContent.substring(0, 200) + '...')
