@@ -2,8 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  // Improve build performance
-  swcMinify: true,
   // Handle static files properly
   async rewrites() {
     return [
