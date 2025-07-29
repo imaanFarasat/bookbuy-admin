@@ -279,17 +279,6 @@ export async function GET(
                                 
                                 <!-- Main Content -->
                                 <div class="content-section">
-                                    <!-- DEBUG INFO -->
-                                    <div style="background: #f0f0f0; border: 2px solid #333; padding: 10px; margin: 10px 0; font-family: monospace; font-size: 12px;">
-                                        <strong>DEBUG INFO:</strong><br>
-                                        Content Length: ${page.content?.length || 0}<br>
-                                        Image Placeholders: ${(page.content?.match(/<!-- Image will be added by user later -->/g) || []).length}<br>
-                                        IMG tags: ${(page.content?.match(/<img/g) || []).length}<br>
-                                        H2 sections: ${(page.content?.match(/<h2[^>]*>.*?<\/h2>/g) || []).length}<br>
-                                        Images in DB: ${page.images?.length || 0}<br>
-                                        Hero Section: ${(page as any).heroSection ? 'Present' : 'Missing'}<br>
-                                        Banner Ads: ${(page as any).bannerAds?.length || 0}
-                                    </div>
                                     ${(() => {
                                         // Embed images into content
                                         let contentWithImages = page.content || ''
