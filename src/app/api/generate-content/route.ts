@@ -86,15 +86,15 @@ async function handler(request: NextRequest, validatedData: any): Promise<NextRe
   `(${index + 1}) Keyword: "${keyword.keyword}"\nInstruction: ${keyword.customPrompt}`
 ).join('\n\n')
 
-      let promptContent = `You are a content writer for an SEO-focused website.
+      let promptContent = `You are a content writer. Write specific, detailed content for each H2 keyword.
 
 Here are H2 keywords and their specific writing instructions:
 
 ${specificInstructions}
 
-Write a 2-4 sentence paragraph for each keyword in the same order. Do not skip any. Avoid generic content. Focus on being helpful and specific.
+Write detailed, specific content for each keyword in the same order. Do not skip any. Focus on the actual topic and follow the custom instructions exactly. Write real, helpful content - not generic placeholders.
 
-Respond with only the paragraphs, one per line, in the same order as the keywords.`
+Respond with only the content paragraphs, one per line, in the same order as the keywords.`
 
 
 

@@ -21,7 +21,7 @@ async function handler(request: NextRequest) {
         messages: [
           {
             role: "system",
-            content: `You are an SEO expert. Generate a compelling meta title and meta description for a webpage.
+            content: `You are a content expert. Generate a compelling meta title and meta description for a webpage.
 
 CRITICAL REQUIREMENTS - STRICTLY ENFORCE THESE LIMITS:
 - Meta Title: MAXIMUM 60 CHARACTERS (including spaces)
@@ -29,7 +29,7 @@ CRITICAL REQUIREMENTS - STRICTLY ENFORCE THESE LIMITS:
 
 IMPORTANT RULES:
 1. ALWAYS include the main keyword in both meta title and meta description
-2. NEVER exceed the character limits - this is critical for SEO
+2. NEVER exceed the character limits
 3. Count every character including spaces and punctuation
 4. Make the meta tags engaging and click-worthy
 5. Analyze the provided content and FAQ to understand the page topic
