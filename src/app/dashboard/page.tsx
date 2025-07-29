@@ -2461,21 +2461,9 @@ export default function Dashboard() {
           console.error('❌ Error saving page to database:', error)
         }
 
-        // Create and download the file
-        const blob = new Blob([templateHtml], { type: 'text/html' })
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `${getMainKeyword().toLowerCase().replace(/\s+/g, '-')}-page.html`
-        document.body.appendChild(a)
-        a.click()
-        document.body.removeChild(a)
-        URL.revokeObjectURL(url)
-        
-        setMessage(useHostedCss ? 
-          '✅ Page generated and saved successfully with hosted resources!' : 
-          '✅ Page generated and saved successfully with embedded custom styles!'
-        )
+        // Page saved successfully - show success message with URL
+        const pageUrl = `https://bookbuy-admin-production.up.railway.app/${pageData.handle}`
+        setMessage(`✅ Page generated and saved successfully! View your page at: ${pageUrl}`)
         setIsGeneratingImages(false)
         
       } catch (error) {
