@@ -71,6 +71,13 @@ export async function GET(
       buttonTextType: typeof (page as any).heroSection?.buttonText,
       buttonTextLength: (page as any).heroSection?.buttonText?.length
     })
+    
+    // Debug FAQ content
+    console.log('🔍 FAQ Content Debug:')
+    console.log('🔍   FAQ Content exists:', !!page.faqContent)
+    console.log('🔍   FAQ Content length:', page.faqContent?.length || 0)
+    console.log('🔍   FAQ Content preview:', page.faqContent?.substring(0, 200) + '...')
+    console.log('🔍   FAQ Schema exists:', !!page.faqSchema)
 
     // Generate the HTML template
     const templateHtml = `
@@ -155,6 +162,25 @@ export async function GET(
             margin: 30px 0;
         }
         
+        .faq-section {
+            margin: 30px 0;
+            padding: 20px 0;
+        }
+        
+        .faq-content {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .h2-faq {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
         .tm-copyright {
             margin-top: 50px;
             padding: 30px 0;
@@ -168,7 +194,15 @@ export async function GET(
             
             .tm-text-container {
                 padding: 0 10px;
-                margin-bottom: 20px;
+            }
+            
+            .faq-section {
+                padding: 15px 0;
+            }
+            
+                        .faq-content {
+                padding: 20px;
+            }
             }
             
             .hero-container {
@@ -380,7 +414,21 @@ export async function GET(
                                     })()}
                                 </div>
                                 
-                                <!-- FAQ content is already embedded in the main content -->
+                                <!-- FAQ Section -->
+                                ${page.faqContent ? `
+                                <div class="faq-section">
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <h2 class="h2-faq mb-4">Frequently Asked Questions</h2>
+                                                <div class="faq-content">
+                                                    ${page.faqContent}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                ` : ''}
                                 
                                 <!-- Related Images -->
                                 ${page.images && page.images.length > 2 ? `
