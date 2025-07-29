@@ -124,6 +124,8 @@ export async function POST(request: NextRequest) {
         content: validatedData.content,
         faqContent: validatedData.faqContent,
         faqSchema: validatedData.faqSchema,
+        heroSection: validatedData.heroSection,
+        bannerAds: validatedData.bannerAds,
         status: 'published',
         publishedAt: new Date(),
         userId: defaultUser.id,

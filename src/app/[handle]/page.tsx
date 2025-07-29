@@ -28,14 +28,13 @@ export default async function DynamicPage({ params }: PageProps) {
   const resolvedParams = await params
   const page = await prisma.page.findUnique({
     where: { handle: resolvedParams.handle },
+    include: {
+      images: true,
+      keywords: true
+    }
   })
 
   if (!page) notFound()
-
-  // Parse the JSON data from the database
-  const heroSection = (page as any).heroSection ? JSON.parse((page as any).heroSection) : null
-  const bannerAds = (page as any).bannerAds ? JSON.parse((page as any).bannerAds) : []
-  const images = (page as any).images ? JSON.parse((page as any).images) : []
 
   // Generate the HTML template similar to dashboard
   const templateHtml = `
@@ -166,52 +165,6 @@ export default async function DynamicPage({ params }: PageProps) {
             line-height: 1.8;
         }
         
-        .banner-section {
-            background: #f8f9fa;
-            padding: 40px 0;
-            margin: 40px 0;
-        }
-        
-        .banner-ad {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .banner-ad img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .banner-ad h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-        }
-        
-        .banner-ad p {
-            color: #666;
-            margin-bottom: 20px;
-        }
-        
-        .banner-ad .btn {
-            background: #007bff;
-            color: white;
-            padding: 10px 25px;
-            border-radius: 25px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .banner-ad .btn:hover {
-            background: #0056b3;
-            transform: translateY(-2px);
-        }
-        
         .image-section {
             margin: 40px 0;
         }
@@ -315,14 +268,20 @@ export default async function DynamicPage({ params }: PageProps) {
     
     <div class="hero-section">
         <div class="container">
-            <h1>${page.mainKeyword}</h1>
-            ${heroSection?.slogan ? `<p>${heroSection.slogan}</p>` : ''}
-            ${heroSection?.buttonUrl ? `<a href="${heroSection.buttonUrl}" class="btn btn-light">Learn More</a>` : ''}
+            <h1>${(page as any).heroSection?.h1 || page.mainKeyword}</h1>
+            ${(page as any).heroSection?.slogan ? `<p>${(page as any).heroSection.slogan}</p>` : ''}
+            ${(page as any).heroSection?.buttonUrl && (page as any).heroSection?.buttonText ? `<a href="${(page as any).heroSection.buttonUrl}" class="btn btn-light">${(page as any).heroSection.buttonText}</a>` : ''}
             
-            ${heroSection?.image1 || heroSection?.image2 ? `
+            ${(page as any).heroSection?.image1 || (page as any).heroSection?.image2 ? `
             <div class="hero-images">
-                ${heroSection?.image1 ? `<img src="${heroSection.image1}" alt="${heroSection?.alt1 || page.mainKeyword}" class="hero-image">` : ''}
-                ${heroSection?.image2 ? `<img src="${heroSection.image2}" alt="${heroSection?.alt2 || page.mainKeyword}" class="hero-image">` : ''}
+                ${(page as any).heroSection?.image1 ? `<img src="${(page as any).heroSection.image1}" alt="${(page as any).heroSection?.alt1 || 'Hero Image 1'}" class="hero-image">` : ''}
+                ${(page as any).heroSection?.image2 ? `<img src="${(page as any).heroSection.image2}" alt="${(page as any).heroSection?.alt2 || 'Hero Image 2'}" class="hero-image">` : ''}
+            </div>
+            ` : page.images && page.images.length > 0 ? `
+            <div class="hero-images">
+                ${page.images.slice(0, 2).map((image: any) => `
+                    <img src="${image.filePath}" alt="${image.altText}" class="hero-image">
+                `).join('')}
             </div>
             ` : ''}
         </div>
@@ -330,18 +289,18 @@ export default async function DynamicPage({ params }: PageProps) {
     
     <div class="content-section">
         <div class="container">
-            ${(page as any).content || ''}
+            ${page.content || ''}
         </div>
     </div>
     
-    ${bannerAds && bannerAds.length > 0 ? `
+    ${(page as any).bannerAds && (page as any).bannerAds.length > 0 ? `
     <div class="banner-section">
         <div class="container">
-            ${bannerAds.map((banner: any) => `
+            ${(page as any).bannerAds.map((banner: any, index: number) => `
                 <div class="banner-ad">
-                    ${banner.image ? `<img src="${banner.image}" alt="Banner Ad">` : ''}
-                    <h3>${banner.title || 'Special Offer'}</h3>
-                    <p>${banner.description || 'Discover amazing deals and offers.'}</p>
+                    ${banner.image?.url ? `<img src="${banner.image.url}" alt="${banner.image.alt || 'Banner Ad'}" class="img-fluid mb-3">` : ''}
+                    <h3>${banner.title || 'Banner Ad'}</h3>
+                    <p>${banner.description || ''}</p>
                     ${banner.cta ? `<a href="#" class="btn">${banner.cta}</a>` : ''}
                 </div>
             `).join('')}
@@ -349,21 +308,21 @@ export default async function DynamicPage({ params }: PageProps) {
     </div>
     ` : ''}
     
-    ${(page as any).faqContent ? `
+    ${page.faqContent ? `
     <div class="faq-section">
         <div class="container">
             <h2>Frequently Asked Questions</h2>
-            ${(page as any).faqContent}
+            ${page.faqContent}
         </div>
     </div>
     ` : ''}
     
-    ${images && images.length > 0 ? `
+    ${page.images && page.images.length > 2 ? `
     <div class="image-section">
         <div class="container">
             <h2>Related Images</h2>
             <div class="row">
-                ${images.map((image: any) => `
+                ${page.images.slice(2).map((image: any) => `
                     <div class="col-md-6 col-lg-4 mb-4">
                         <img src="${image.filePath}" alt="${image.altText}" class="img-fluid">
                         <p class="mt-2 text-muted">${image.altText}</p>
