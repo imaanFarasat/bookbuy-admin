@@ -2180,6 +2180,15 @@ export default function Dashboard() {
             const isEven = i % 2 === 0
             const hasValidImage = bodyImage && bodyImage.url && bodyImage.url.trim() !== ''
             console.log(`🔍   hasValidImage:`, hasValidImage)
+            console.log(`🔍   bodyImage.url.trim():`, bodyImage?.url?.trim())
+            console.log(`🔍   bodyImage.url.trim() !== '':`, bodyImage?.url?.trim() !== '')
+            
+            // Force the image to be included for debugging
+            const imageHtml = hasValidImage 
+              ? `<img src="${bodyImage.url}" alt="${bodyImage.alt}" class="img-fluid rounded shadow" loading="lazy" decoding="async" onerror="this.style.display='none'; console.log('Content image failed to load: ' + this.src);" onload="console.log('Content image loaded successfully: ' + this.src)">`
+              : '<!-- Image will be added by user later -->'
+            
+            console.log(`🔍   imageHtml:`, imageHtml.substring(0, 100) + '...')
                 
                 if (isEven) {
                   // Image on left, content on right
@@ -2189,14 +2198,14 @@ export default function Dashboard() {
                         <p class="mb-3">${content}</p>
                     </div>
                     <div class="col-lg-4 mb-4">
-                        ${hasValidImage ? `<img src="${bodyImage.url}" alt="${bodyImage.alt}" class="img-fluid rounded shadow" loading="lazy" decoding="async" onerror="this.style.display='none'; console.log('Content image failed to load: ' + this.src);" onload="console.log('Content image loaded successfully: ' + this.src)">` : '<!-- Image will be added by user later -->'}
+                        ${imageHtml}
                     </div>
                 </div>\n\n`
                 } else {
                   // Content on left, image on right
               finalContent += `<div class="row mb-4">
                     <div class="col-lg-4 mb-4">
-                        ${hasValidImage ? `<img src="${bodyImage.url}" alt="${bodyImage.alt}" class="img-fluid rounded shadow" loading="lazy" decoding="async" onerror="this.style.display='none'; console.log('Content image failed to load: ' + this.src);" onload="console.log('Content image loaded successfully: ' + this.src)">` : '<!-- Image will be added by user later -->'}
+                        ${imageHtml}
                     </div>
                     <div class="col-lg-8 mb-4">
                         ${heading}
