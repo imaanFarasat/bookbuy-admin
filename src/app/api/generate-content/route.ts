@@ -53,7 +53,7 @@ async function handler(request: NextRequest, validatedData: any): Promise<NextRe
     }
 
     // Check if OpenAI API key is valid (not empty string)
-    if (!process.env.OPENAI_API_KEY.trim()) {
+    if (process.env.OPENAI_API_KEY && !process.env.OPENAI_API_KEY.trim()) {
       console.log('OpenAI API key is empty, generating simple content')
       return NextResponse.json({ 
         content: `<div class="row mb-4">
@@ -136,7 +136,7 @@ ${keywords.map((keyword: any) => {
             content: promptContent
           }
         ],
-        max_tokens: 6000,
+        max_tokens: 4000,
         temperature: 0.8
       })
 
