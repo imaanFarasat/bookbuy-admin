@@ -55,11 +55,11 @@ async function handler(request: NextRequest, validatedData: any): Promise<NextRe
     // Try to use OpenAI API
     // ⚠️ CRITICAL: Only provide structure to AI - let AI decide content
     try {
-      let promptContent = `Create content for these H2 keywords: ${allKeywords.join(', ')}. 
+      let promptContent = `Create detailed content for these H2 keywords: ${allKeywords.join(', ')}. 
 
 H2 positions: ${keywords.map((keyword: any, index: number) => `${index + 1}st: ${keyword.keyword}`).join(', ')}
 
-Write unique content for each H2. Use this basic structure but be creative with the content:
+Write comprehensive, detailed content for each H2. Use this structure:
 
 ${keywords.map((keyword: any) => {
   const capitalizedKeyword = keyword.keyword.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')
@@ -69,20 +69,20 @@ ${keywords.map((keyword: any) => {
   </div>
   <div class="col-lg-8 mb-4">
       <h2 class="h2-body-content">${capitalizedKeyword}</h2>
-      <p class="p-body-content">[Be creative with content about ${keyword.keyword}]</p>
+      <p class="p-body-content">[Write detailed, comprehensive content about ${keyword.keyword} - be thorough and informative]</p>
   </div>
 </div>`
 }).join('\n\n')}`
 
       // Add custom prompt if provided
       if (customPrompt && customPrompt.trim()) {
-        promptContent = `Create content for these H2 keywords: ${allKeywords.join(', ')}. 
+        promptContent = `Create detailed content for these H2 keywords: ${allKeywords.join(', ')}. 
 
 H2 positions: ${keywords.map((keyword: any, index: number) => `${index + 1}st: ${keyword.keyword}`).join(', ')}
 
 User request: ${customPrompt}
 
-Write unique content for each H2. Use this basic structure but be creative with the content:
+Write comprehensive, detailed content for each H2. Use this structure:
 
 ${keywords.map((keyword: any) => {
   const capitalizedKeyword = keyword.keyword.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')
@@ -92,7 +92,7 @@ ${keywords.map((keyword: any) => {
   </div>
   <div class="col-lg-8 mb-4">
       <h2 class="h2-body-content">${capitalizedKeyword}</h2>
-      <p class="p-body-content">[Be creative with content about ${keyword.keyword}]</p>
+      <p class="p-body-content">[Write detailed, comprehensive content about ${keyword.keyword} - be thorough and informative]</p>
   </div>
 </div>`
 }).join('\n\n')}`
@@ -111,7 +111,7 @@ ${keywords.map((keyword: any) => {
             content: promptContent
           }
         ],
-        max_tokens: 3000,
+        max_tokens: 4000,
         temperature: 0.8
       })
 
