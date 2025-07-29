@@ -14,32 +14,36 @@ async function handler(request: NextRequest, validatedData: any): Promise<NextRe
     
     console.log('🔍 DEBUG: mainKeyword =', mainKeyword)
     console.log('🔍 DEBUG: keywords =', keywords)
-    console.log('🔍 DEBUG: keywords[0].keyword =', keywords[0]?.keyword)
+    console.log('🔍 DEBUG: all keywords =', keywords.map((k: any) => k.keyword).join(', '))
 
-    // Get the specific keyword we want to generate content for
-    const specificKeyword = keywords[0]?.keyword || mainKeyword
-    console.log('🔍 DEBUG: specificKeyword =', specificKeyword)
+    // Get all keywords to generate content for
+    const allKeywords = keywords.map((k: any) => k.keyword)
+    console.log('🔍 DEBUG: allKeywords =', allKeywords)
 
     // Check if OpenAI API key is configured
     if (!process.env.OPENAI_API_KEY) {
       console.log('OpenAI API key not configured, generating simple content')
       
-      // Generate simple content without AI - just provide structure
+      // Generate simple content without AI - just provide structure for all keywords
       // ⚠️ REMEMBER: No pre-written content - only structure and placeholders
-      const capitalizedKeyword = specificKeyword
-        .split(' ')
-        .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(' ')
+      let simpleContent = ''
       
-      const simpleContent = `<div class="row mb-4">
-        <div class="col-lg-4 mb-4">
-            <!-- Image will be added by user later -->
-        </div>
-        <div class="col-lg-8 mb-4">
-            <h2 class="h2-body-content">${capitalizedKeyword}</h2>
-            <p class="p-body-content">[AI will generate content about ${specificKeyword}]</p>
-        </div>
-    </div>`
+      for (const keyword of keywords) {
+        const capitalizedKeyword = keyword.keyword
+          .split(' ')
+          .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+          .join(' ')
+        
+        simpleContent += `<div class="row mb-4">
+          <div class="col-lg-4 mb-4">
+              <!-- Image will be added by user later -->
+          </div>
+          <div class="col-lg-8 mb-4">
+              <h2 class="h2-body-content">${capitalizedKeyword}</h2>
+              <p class="p-body-content">[AI will generate content about ${keyword.keyword}]</p>
+          </div>
+      </div>`
+      }
       
       return NextResponse.json({ 
         content: simpleContent,
@@ -51,21 +55,26 @@ async function handler(request: NextRequest, validatedData: any): Promise<NextRe
     // Try to use OpenAI API
     // ⚠️ CRITICAL: Only provide structure to AI - let AI decide content
     try {
-      let promptContent = `Create content about ${specificKeyword}. Generate comprehensive content about this specific keyword: "${specificKeyword}".
+      let promptContent = `Create a unique article about ${mainKeyword} using these H2 keywords: ${allKeywords.join(', ')}. 
 
-Use this keyword as an h2 heading with the class "h2-body-content". Create a single content section using Bootstrap grid structure:
+Treat this as ONE unique article with multiple sections. Each H2 keyword should have its own distinct content section. Use each keyword exactly as provided as an h2 heading with the class "h2-body-content". 
 
-<div class="row mb-4">
+Create content sections using Bootstrap grid structure for each keyword:
+
+${keywords.map((keyword: any) => {
+  const capitalizedKeyword = keyword.keyword.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')
+  return `<div class="row mb-4">
   <div class="col-lg-4 mb-4">
       <!-- Image will be added by user later -->
   </div>
   <div class="col-lg-8 mb-4">
-      <h2 class="h2-body-content">${specificKeyword.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}</h2>
-      <p class="p-body-content">[Generate comprehensive, informative content about ${specificKeyword}]</p>
+      <h2 class="h2-body-content">${capitalizedKeyword}</h2>
+      <p class="p-body-content">[Generate comprehensive, informative content about ${keyword.keyword}]</p>
   </div>
-</div>
+</div>`
+}).join('\n\n')}
 
-Generate detailed, informative content about ${specificKeyword} using <p class="p-body-content"> tags. Focus specifically on this keyword and provide valuable information about it.`
+Generate detailed, informative content for each keyword using <p class="p-body-content"> tags. Make each section unique and valuable, even if the keywords are similar. Focus on providing comprehensive information about each specific keyword.`
 
       // Add custom prompt if provided
       if (customPrompt && customPrompt.trim()) {
