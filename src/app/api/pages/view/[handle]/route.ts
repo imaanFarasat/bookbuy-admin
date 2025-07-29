@@ -86,6 +86,36 @@ export async function GET(
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Original Template CSS -->
     <link rel="stylesheet" href="/templates/templatemo_555_upright/css/templatemo-upright.css">
+    
+    <!-- Custom CSS for hero image links -->
+    <style>
+        .hero-image-link {
+            display: block;
+            text-decoration: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .hero-image-link:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .hero-image-link .hero-image {
+            transition: filter 0.3s ease;
+        }
+        
+        .hero-image-link:hover .hero-image {
+            filter: brightness(1.1);
+        }
+        
+        .hero-image-link .image-overlay {
+            transition: opacity 0.3s ease;
+        }
+        
+        .hero-image-link:hover .image-overlay {
+            opacity: 0.8;
+        }
+    </style>
 </head>
 <body>
     <div class="tm-main">
@@ -122,25 +152,53 @@ export async function GET(
                                                 <div class="images-grid">
                                                     ${(page as any).heroSection?.image1 ? `
                                                     <div class="image-wrapper">
+                                                        ${(page as any).heroSection?.buttonUrl ? `
+                                                        <a href="${(page as any).heroSection.buttonUrl}" class="hero-image-link">
+                                                            <img src="${(page as any).heroSection.image1}" alt="${(page as any).heroSection?.alt1 || 'Hero Image 1'}" class="hero-image">
+                                                            <div class="image-overlay overlay-first"></div>
+                                                        </a>
+                                                        ` : `
                                                         <img src="${(page as any).heroSection.image1}" alt="${(page as any).heroSection?.alt1 || 'Hero Image 1'}" class="hero-image">
                                                         <div class="image-overlay overlay-first"></div>
+                                                        `}
                                                     </div>
                                                     ` : ''}
                                                     ${(page as any).heroSection?.image2 ? `
                                                     <div class="image-wrapper image-second">
+                                                        ${(page as any).heroSection?.buttonUrl ? `
+                                                        <a href="${(page as any).heroSection.buttonUrl}" class="hero-image-link">
+                                                            <img src="${(page as any).heroSection.image2}" alt="${(page as any).heroSection?.alt2 || 'Hero Image 2'}" class="hero-image">
+                                                            <div class="image-overlay overlay-second"></div>
+                                                        </a>
+                                                        ` : `
                                                         <img src="${(page as any).heroSection.image2}" alt="${(page as any).heroSection?.alt2 || 'Hero Image 2'}" class="hero-image">
                                                         <div class="image-overlay overlay-second"></div>
+                                                        `}
                                                     </div>
                                                     ` : ''}
                                                     ${!((page as any).heroSection?.image1 || (page as any).heroSection?.image2) && page.images && page.images.length > 0 ? `
                                                     <div class="image-wrapper">
+                                                        ${(page as any).heroSection?.buttonUrl ? `
+                                                        <a href="${(page as any).heroSection.buttonUrl}" class="hero-image-link">
+                                                            <img src="${page.images[0].filePath}" alt="${page.images[0].altText}" class="hero-image">
+                                                            <div class="image-overlay overlay-first"></div>
+                                                        </a>
+                                                        ` : `
                                                         <img src="${page.images[0].filePath}" alt="${page.images[0].altText}" class="hero-image">
                                                         <div class="image-overlay overlay-first"></div>
+                                                        `}
                                                     </div>
                                                     ${page.images.length > 1 ? `
                                                     <div class="image-wrapper image-second">
+                                                        ${(page as any).heroSection?.buttonUrl ? `
+                                                        <a href="${(page as any).heroSection.buttonUrl}" class="hero-image-link">
+                                                            <img src="${page.images[1].filePath}" alt="${page.images[1].altText}" class="hero-image">
+                                                            <div class="image-overlay overlay-second"></div>
+                                                        </a>
+                                                        ` : `
                                                         <img src="${page.images[1].filePath}" alt="${page.images[1].altText}" class="hero-image">
                                                         <div class="image-overlay overlay-second"></div>
+                                                        `}
                                                     </div>
                                                     ` : ''}
                                                     ` : ''}
@@ -149,24 +207,6 @@ export async function GET(
                                         </div>
                                     </div>
                                 </div>
-                                
-                                <!-- Banner Ads Section -->
-                                ${(page as any).bannerAds && (page as any).bannerAds.length > 0 ? `
-                                <div class="banner-ad-container">
-                                    ${(page as any).bannerAds.map((banner: any, index: number) => `
-                                    <div class="banner-ad-content">
-                                        <div class="banner-ad-image">
-                                            ${banner.image?.url ? `<img src="${banner.image.url}" alt="${banner.image.alt || 'Banner Ad'}" class="img-fluid">` : ''}
-                                        </div>
-                                        <div class="banner-ad-text">
-                                            <h3 class="banner-ad-title">${banner.title || 'Banner Ad'}</h3>
-                                            <p class="banner-ad-description">${banner.description || ''}</p>
-                                            ${banner.cta ? `<a href="#" class="banner-ad-btn">${banner.cta}</a>` : ''}
-                                        </div>
-                                    </div>
-                                    `).join('')}
-                                </div>
-                                ` : ''}
                                 
                                 <!-- Main Content -->
                                 <div class="content-section">
@@ -185,6 +225,7 @@ export async function GET(
                                         // Embed images into content
                                         let contentWithImages = page.content || ''
                                         const contentImages = page.images || []
+                                        const bannerAds = (page as any).bannerAds || []
                                         
                                         if (contentImages.length > 0) {
                                             // Replace image placeholders with actual images
@@ -215,6 +256,50 @@ export async function GET(
                                                     console.log(`Skipping empty image path for image ${i + 1}`)
                                                 }
                                             }
+                                        }
+                                        
+                                        // Insert banner ads at appropriate intervals
+                                        if (bannerAds.length > 0) {
+                                            const contentSections = contentWithImages.split('</div>')
+                                            const sectionsWithBanners = []
+                                            
+                                            bannerAds.forEach((banner: any, bannerIndex: number) => {
+                                                // Insert banner after every 2 content sections (or at the end if not enough sections)
+                                                const insertPosition = Math.min((bannerIndex + 1) * 2, contentSections.length - 1)
+                                                
+                                                // Add content sections up to the insert position
+                                                for (let i = sectionsWithBanners.length; i < insertPosition; i++) {
+                                                    if (contentSections[i]) {
+                                                        sectionsWithBanners.push(contentSections[i] + '</div>')
+                                                    }
+                                                }
+                                                
+                                                // Insert banner ad
+                                                const bannerHtml = `
+                                                <div class="banner-ad-container">
+                                                    <div class="banner-ad-content">
+                                                        <div class="banner-ad-image">
+                                                            ${banner.image?.url ? `<img src="${banner.image.url}" alt="${banner.image.alt || 'Banner Ad'}" class="img-fluid">` : ''}
+                                                        </div>
+                                                        <div class="banner-ad-text">
+                                                            <h3 class="banner-ad-title">${banner.title || 'Banner Ad'}</h3>
+                                                            <p class="banner-ad-description">${banner.description || ''}</p>
+                                                            ${banner.cta ? `<a href="#" class="banner-ad-btn">${banner.cta}</a>` : ''}
+                                                        </div>
+                                                    </div>
+                                                </div>`
+                                                
+                                                sectionsWithBanners.push(bannerHtml)
+                                            })
+                                            
+                                            // Add remaining content sections
+                                            for (let i = sectionsWithBanners.length; i < contentSections.length; i++) {
+                                                if (contentSections[i]) {
+                                                    sectionsWithBanners.push(contentSections[i] + '</div>')
+                                                }
+                                            }
+                                            
+                                            contentWithImages = sectionsWithBanners.join('')
                                         }
                                         
                                         return contentWithImages
