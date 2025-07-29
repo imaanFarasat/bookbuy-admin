@@ -1648,10 +1648,11 @@ export default function Dashboard() {
     
     setSelectedImages(prev => [...prev, mockFile])
     setImageUrls(prev => [...prev, imageUrl])
+    // Always use main keyword as alt text for all images
     const mainKeyword = getMainKeyword()
-    setImageAltTexts(prev => [...prev, pexelsImage.alt || mainKeyword])
+    setImageAltTexts(prev => [...prev, mainKeyword])
     
-    setMessage(`✅ Added image: ${pexelsImage.alt}`)
+    setMessage(`✅ Added image with alt text: ${mainKeyword}`)
   }
 
   // Remove image (updated to work with both uploaded and Pexels images)
@@ -1730,7 +1731,7 @@ export default function Dashboard() {
     const mainKeyword = getMainKeyword()
     const newImage = {
       url: pexelsImage.url || pexelsImage.largeUrl || pexelsImage.originalUrl,
-      alt: pexelsImage.alt || mainKeyword,
+      alt: mainKeyword, // Always use main keyword as alt text
       source: 'pexels' as const
     }
     
@@ -3590,7 +3591,7 @@ knife maintenance tips - 1800"
                             type="text"
                             value={image.alt}
                             onChange={(e) => updateBodyContentImage(index, 'alt', e.target.value)}
-                            placeholder={`Alt text (${getMainKeyword()})`}
+                            placeholder={`Alt text (default: ${getMainKeyword()})`}
                             className="w-full mt-2 px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400"
                           />
                           
@@ -3656,18 +3657,19 @@ knife maintenance tips - 1800"
                       <h6 className="text-sm font-medium text-gray-700">Search Pexels Images</h6>
                       <p className="text-xs text-gray-600">Find professional images for your content</p>
                     </div>
-                    <PexelsSearch
-                      onImageSelect={(image) => {
-                        const mainKeyword = getMainKeyword()
-                        addBodyContentImage({
-                          url: image.largeUrl || image.url,
-                          alt: image.alt || mainKeyword,
-                          source: 'pexels' as const
-                        })
-                      }}
-                      placeholder="Search for content images..."
-                      maxHeight="max-h-32"
-                    />
+                                                    <PexelsSearch
+                                  onImageSelect={(image) => {
+                                    const mainKeyword = getMainKeyword()
+                                    addBodyContentImage({
+                                      url: image.largeUrl || image.url,
+                                      alt: mainKeyword, // Always use main keyword as alt text
+                                      source: 'pexels' as const
+                                    })
+                                  }}
+                                  placeholder="Search for content images..."
+                                  maxHeight="max-h-32"
+                                  mainKeyword={getMainKeyword()}
+                                />
                   </div>
                   
                   {/* Save Main Content Images Button */}
@@ -3894,14 +3896,15 @@ knife maintenance tips - 1800"
                                     const mainKeyword = getMainKeyword()
                                     const newImage = {
                                       url: image.largeUrl || image.url,
-                                      alt: image.alt || mainKeyword,
+                                      alt: mainKeyword, // Always use main keyword as alt text
                                       source: 'pexels' as const
                                     }
                                     updateBannerAd(index, 'image', newImage)
-                                    setMessage(`✅ Added Pexels image: ${image.alt}`)
+                                    setMessage(`✅ Added Pexels image with alt text: ${mainKeyword}`)
                                   }}
                                   placeholder="Search for banner images..."
                                   maxHeight="max-h-32"
+                                  mainKeyword={getMainKeyword()}
                                 />
                               </div>
                             </div>

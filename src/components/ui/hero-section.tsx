@@ -244,21 +244,22 @@ export default function HeroSection({
                     // If no first image, set as first image
                     if (!heroImage1) {
                       onImage1Change(image.largeUrl || image.url)
-                      onAlt1Change(image.alt || mainKeyword)
+                      onAlt1Change(mainKeyword) // Always use main keyword as alt text
                     }
                     // If first image exists but no second image, set as second image
                     else if (!heroImage2) {
                       onImage2Change(image.largeUrl || image.url)
-                      onAlt2Change(image.alt || mainKeyword)
+                      onAlt2Change(mainKeyword) // Always use main keyword as alt text
                     }
                     // If both images exist, replace the second image
                     else {
                       onImage2Change(image.largeUrl || image.url)
-                      onAlt2Change(image.alt || mainKeyword)
+                      onAlt2Change(mainKeyword) // Always use main keyword as alt text
                     }
                   }}
                   placeholder="Search for hero images..."
                   maxHeight="max-h-32"
+                  mainKeyword={mainKeyword}
                 />
               </div>
               
@@ -300,7 +301,7 @@ export default function HeroSection({
                           type="text"
                           value={heroAlt1}
                           onChange={(e) => onAlt1Change(e.target.value)}
-                          placeholder={`Alt text (${mainKeyword})`}
+                          placeholder={`Alt text (default: ${mainKeyword})`}
                           className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400"
                         />
                       </div>
@@ -348,7 +349,7 @@ export default function HeroSection({
                           type="text"
                           value={heroAlt2}
                           onChange={(e) => onAlt2Change(e.target.value)}
-                          placeholder={`Alt text (${mainKeyword})`}
+                          placeholder={`Alt text (default: ${mainKeyword})`}
                           className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400"
                         />
                       </div>

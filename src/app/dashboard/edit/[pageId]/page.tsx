@@ -279,7 +279,7 @@ export default function EditPage() {
           img.originalName.includes('content')
         ).map((img: PageImage) => ({
           url: img.filePath,
-          alt: img.altText,
+          alt: img.altText || page.mainKeyword || '', // Use main keyword as fallback
           source: 'file',
           id: img.id
         })) || [])
@@ -293,8 +293,9 @@ export default function EditPage() {
           setHeroButtonText(page.heroSection.buttonText || '')
           setHeroImage1(page.heroSection.image1 || '')
           setHeroImage2(page.heroSection.image2 || '')
-          setHeroAlt1(page.heroSection.alt1 || '')
-          setHeroAlt2(page.heroSection.alt2 || '')
+          // Use main keyword as alt text for hero images
+          setHeroAlt1(page.heroSection.alt1 || page.mainKeyword || '')
+          setHeroAlt2(page.heroSection.alt2 || page.mainKeyword || '')
         }
 
         // Populate banner ads if available

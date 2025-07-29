@@ -17,13 +17,15 @@ interface PexelsSearchProps {
   placeholder?: string
   className?: string
   maxHeight?: string
+  mainKeyword?: string // Add main keyword prop
 }
 
 export default function PexelsSearch({ 
   onImageSelect, 
   placeholder = "Search for images...",
   className = "",
-  maxHeight = "max-h-48"
+  maxHeight = "max-h-48",
+  mainKeyword = ""
 }: PexelsSearchProps) {
   const [query, setQuery] = useState('')
   const [images, setImages] = useState<PexelsImage[]>([])
@@ -147,7 +149,14 @@ export default function PexelsSearch({
                <div
                  key={image.id}
                  className="relative group cursor-pointer border border-gray-200 rounded-lg overflow-hidden hover:border-blue-400 transition-all duration-200 aspect-square"
-                 onClick={() => onImageSelect(image)}
+                 onClick={() => {
+                   // Always use main keyword as alt text if provided
+                   const imageWithMainKeywordAlt = {
+                     ...image,
+                     alt: mainKeyword || image.alt
+                   }
+                   onImageSelect(imageWithMainKeywordAlt)
+                 }}
                >
                  <div className="w-full aspect-square">
                    <img
